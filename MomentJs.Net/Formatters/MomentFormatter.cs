@@ -4,6 +4,8 @@ using MomentJs.Net.Definitions;
 using MomentJs.Net.Exceptions;
 using MomentJs.Net.Formats;
 
+// ReSharper disable InconsistentNaming
+
 namespace MomentJs.Net.Formatters
 {
     public static class MomentFormatter
@@ -18,7 +20,7 @@ namespace MomentJs.Net.Formatters
             if (format == null)
                 return null;
 
-            StringBuilder result = new StringBuilder();
+            StringBuilder resultBuilder = new StringBuilder();
 
             State state = State.None;
             StringBuilder tokenBuffer = new StringBuilder();
@@ -28,226 +30,228 @@ namespace MomentJs.Net.Formatters
                 switch (currentState)
                 {
                     case State.M:
-                        result.Append(dateTime.Month);
+                        resultBuilder.Append(dateTime.Month);
                         break;
                     case State.Mo:
-                        result.Append(locale.Ordinal.Format(dateTime.Month));
+                        resultBuilder.Append(locale.Ordinal.Format(dateTime.Month));
                         break;
                     case State.MM:
-                        result.Append(dateTime.Month.ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(dateTime.Month.ToString().PadLeft(2, '0'));
                         break;
                     case State.MMM:
-                        result.Append(locale.MonthsShort[dateTime.Month - 1]);
+                        resultBuilder.Append(locale.MonthsShort[dateTime.Month - 1]);
                         break;
                     case State.MMMM:
-                        result.Append(locale.Months[dateTime.Month - 1]);
+                        resultBuilder.Append(locale.Months[dateTime.Month - 1]);
                         break;
                     case State.Q:
-                        result.Append((int) Math.Ceiling(dateTime.Month / 3.0));
+                        resultBuilder.Append((int) Math.Ceiling(dateTime.Month / 3.0));
                         break;
                     case State.Qo:
-                        result.Append(locale.Ordinal.Format((int) Math.Ceiling(dateTime.Month / 3.0)));
+                        resultBuilder.Append(locale.Ordinal.Format((int) Math.Ceiling(dateTime.Month / 3.0)));
                         break;
                     case State.D:
-                        result.Append(dateTime.Day);
+                        resultBuilder.Append(dateTime.Day);
                         break;
                     case State.Do:
-                        result.Append(locale.Ordinal.Format(dateTime.Day));
+                        resultBuilder.Append(locale.Ordinal.Format(dateTime.Day));
                         break;
                     case State.DD:
-                        result.Append(dateTime.Day.ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(dateTime.Day.ToString().PadLeft(2, '0'));
                         break;
                     case State.DDD:
-                        result.Append(dateTime.DayOfYear);
+                        resultBuilder.Append(dateTime.DayOfYear);
                         break;
                     case State.DDDo:
-                        result.Append(locale.Ordinal.Format(dateTime.DayOfYear));
+                        resultBuilder.Append(locale.Ordinal.Format(dateTime.DayOfYear));
                         break;
                     case State.DDDD:
-                        result.Append(dateTime.DayOfYear.ToString().PadLeft(3, '0'));
+                        resultBuilder.Append(dateTime.DayOfYear.ToString().PadLeft(3, '0'));
                         break;
                     case State.d:
-                        result.Append((int) dateTime.DayOfWeek);
+                        resultBuilder.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.@do:
-                        result.Append(locale.Ordinal.Format((int) dateTime.DayOfWeek));
+                        resultBuilder.Append(locale.Ordinal.Format((int) dateTime.DayOfWeek));
                         break;
                     case State.dd:
-                        result.Append(locale.WeekdaysMin[(int) dateTime.DayOfWeek]);
+                        resultBuilder.Append(locale.WeekdaysMin[(int) dateTime.DayOfWeek]);
                         break;
                     case State.ddd:
-                        result.Append(locale.WeekdaysShort[(int) dateTime.DayOfWeek]);
+                        resultBuilder.Append(locale.WeekdaysShort[(int) dateTime.DayOfWeek]);
                         break;
                     case State.dddd:
-                        result.Append(locale.Weekdays[(int) dateTime.DayOfWeek]);
+                        resultBuilder.Append(locale.Weekdays[(int) dateTime.DayOfWeek]);
                         break;
                     case State.e:
-                        result.Append((int) dateTime.DayOfWeek);
+                        resultBuilder.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.E:
                         int dayOfWeek = (int) dateTime.DayOfWeek - (int) locale.Culture.DateTimeFormat.FirstDayOfWeek;
                         if (dayOfWeek < 0)
                             dayOfWeek = 7 + dayOfWeek;
-                        result.Append(dayOfWeek);
+                        resultBuilder.Append(dayOfWeek);
                         break;
                     case State.w:
                     case State.W:
-                        result.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                        resultBuilder.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
                             locale.Culture.DateTimeFormat.CalendarWeekRule,
                             locale.Culture.DateTimeFormat.FirstDayOfWeek));
                         break;
                     case State.wo:
                     case State.Wo:
-                        result.Append(locale.Ordinal.Format(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                        resultBuilder.Append(locale.Ordinal.Format(locale.Culture.Calendar.GetWeekOfYear(dateTime,
                             locale.Culture.DateTimeFormat.CalendarWeekRule,
                             locale.Culture.DateTimeFormat.FirstDayOfWeek)));
                         break;
                     case State.ww:
                     case State.WW:
-                        result.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                        resultBuilder.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
                             locale.Culture.DateTimeFormat.CalendarWeekRule,
                             locale.Culture.DateTimeFormat.FirstDayOfWeek).ToString().PadLeft(2, '0'));
                         break;
                     case State.Y:
-                        result.Append(dateTime.Year.ToString());
+                        resultBuilder.Append(dateTime.Year.ToString());
                         break;
                     case State.YY:
-                        result.Append(dateTime.Year.ToString().Substring(2));
+                        resultBuilder.Append(dateTime.Year.ToString().Substring(2));
                         break;
                     case State.YYYY:
                         if (dateTime.Year > 9999)
                             throw new UnsupportedFormatException(
                                 "The YYYY format doesn't support years above 9999. Use Y instead.");
-                        result.Append(dateTime.Year.ToString());
+                        resultBuilder.Append(dateTime.Year.ToString());
                         break;
                     case State.gg:
-                        result.Append(dateTime.Year.ToString().Substring(2));
+                        resultBuilder.Append(dateTime.Year.ToString().Substring(2));
                         break;
                     case State.gggg:
                         if (dateTime.Year > 9999)
                             throw new UnsupportedFormatException(
                                 "The gggg format doesn't support years above 9999. Use Y instead.");
-                        result.Append(dateTime.Year.ToString());
+                        resultBuilder.Append(dateTime.Year.ToString());
                         break;
                     case State.GG:
-                        result.Append(dateTime.Year.ToString().Substring(2));
+                        resultBuilder.Append(dateTime.Year.ToString().Substring(2));
                         break;
                     case State.GGGG:
                         if (dateTime.Year > 9999)
                             throw new UnsupportedFormatException(
                                 "The gggg format doesn't support years above 9999. Use Y instead.");
-                        result.Append(dateTime.Year.ToString());
+                        resultBuilder.Append(dateTime.Year.ToString());
                         break;
                     case State.A:
-                        result.Append(dateTime.TimeOfDay >= TimeSpan.Zero && dateTime.TimeOfDay < TimeSpan.FromHours(12)
+                        resultBuilder.Append(dateTime.TimeOfDay >= TimeSpan.Zero &&
+                                             dateTime.TimeOfDay < TimeSpan.FromHours(12)
                             ? locale.Culture.DateTimeFormat.AMDesignator.ToUpper()
                             : locale.Culture.DateTimeFormat.PMDesignator.ToUpper());
                         break;
                     case State.a:
-                        result.Append(dateTime.TimeOfDay >= TimeSpan.Zero && dateTime.TimeOfDay < TimeSpan.FromHours(12)
+                        resultBuilder.Append(dateTime.TimeOfDay >= TimeSpan.Zero &&
+                                             dateTime.TimeOfDay < TimeSpan.FromHours(12)
                             ? locale.Culture.DateTimeFormat.AMDesignator.ToLower()
                             : locale.Culture.DateTimeFormat.PMDesignator.ToLower());
                         break;
                     case State.H:
-                        result.Append(dateTime.Hour);
+                        resultBuilder.Append(dateTime.Hour);
                         break;
                     case State.HH:
-                        result.Append(dateTime.Hour.ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(dateTime.Hour.ToString().PadLeft(2, '0'));
                         break;
                     case State.h:
                         int h = dateTime.TimeOfDay < TimeSpan.FromHours(12)
                             ? dateTime.Hour
                             : dateTime.Hour - 12;
-                        result.Append(h);
+                        resultBuilder.Append(h);
                         break;
                     case State.hh:
                         int hh = dateTime.TimeOfDay < TimeSpan.FromHours(12)
                             ? dateTime.Hour
                             : dateTime.Hour - 12;
-                        result.Append(hh.ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(hh.ToString().PadLeft(2, '0'));
                         break;
                     case State.k:
-                        result.Append(dateTime.Hour + 1);
+                        resultBuilder.Append(dateTime.Hour + 1);
                         break;
                     case State.kk:
-                        result.Append((dateTime.Hour + 1).ToString().PadLeft(2, '0'));
+                        resultBuilder.Append((dateTime.Hour + 1).ToString().PadLeft(2, '0'));
                         break;
                     case State.m:
-                        result.Append(dateTime.Minute);
+                        resultBuilder.Append(dateTime.Minute);
                         break;
                     case State.mm:
-                        result.Append(dateTime.Minute.ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(dateTime.Minute.ToString().PadLeft(2, '0'));
                         break;
                     case State.s:
-                        result.Append(dateTime.Second);
+                        resultBuilder.Append(dateTime.Second);
                         break;
                     case State.ss:
-                        result.Append(dateTime.Second.ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(dateTime.Second.ToString().PadLeft(2, '0'));
                         break;
                     case State.S:
                         string valueS = dateTime.Millisecond.ToString();
-                        result.Append(valueS.Substring(0, Math.Min(valueS.Length, 1)).PadLeft(1, '0'));
+                        resultBuilder.Append(valueS.Substring(0, Math.Min(valueS.Length, 1)).PadLeft(1, '0'));
                         break;
                     case State.SS:
                         string upperS2 = dateTime.Millisecond.ToString();
-                        result.Append(upperS2.Substring(0, Math.Min(upperS2.Length, 2)).PadLeft(2, '0'));
+                        resultBuilder.Append(upperS2.Substring(0, Math.Min(upperS2.Length, 2)).PadLeft(2, '0'));
                         break;
                     case State.SSS:
                         string upperS3 = dateTime.Millisecond.ToString();
-                        result.Append(upperS3.Substring(0, Math.Min(upperS3.Length, 3)).PadLeft(3, '0'));
+                        resultBuilder.Append(upperS3.Substring(0, Math.Min(upperS3.Length, 3)).PadLeft(3, '0'));
                         break;
                     case State.Z:
                         TimeSpan upperZ = new DateTimeOffset(dateTime).Offset;
-                        result.Append(upperZ < TimeSpan.Zero ? "-" : "+");
-                        result.Append($"{upperZ.Hours.ToString().PadLeft(2, '0')}:00");
+                        resultBuilder.Append(upperZ < TimeSpan.Zero ? "-" : "+");
+                        resultBuilder.Append($"{upperZ.Hours.ToString().PadLeft(2, '0')}:00");
                         break;
                     case State.ZZ:
                         TimeSpan upperZ2 = new DateTimeOffset(dateTime).Offset;
-                        result.Append(upperZ2 < TimeSpan.Zero ? "-" : "+");
-                        result.Append($"{upperZ2.Hours.ToString().PadLeft(2, '0')}00");
+                        resultBuilder.Append(upperZ2 < TimeSpan.Zero ? "-" : "+");
+                        resultBuilder.Append($"{upperZ2.Hours.ToString().PadLeft(2, '0')}00");
                         break;
                     case State.X:
                         DateTimeOffset upperX = new DateTimeOffset(dateTime);
-                        result.Append(upperX.ToUnixTimeSeconds());
+                        resultBuilder.Append(upperX.ToUnixTimeSeconds());
                         break;
                     case State.x:
                         DateTimeOffset x = new DateTimeOffset(dateTime);
-                        result.Append(x.ToUnixTimeMilliseconds());
+                        resultBuilder.Append(x.ToUnixTimeMilliseconds());
                         break;
                     case State.LT:
-                        result.Append(Format(dateTime, locale.LongDateFormat.LT, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LT, locale));
                         break;
                     case State.LTS:
-                        result.Append(Format(dateTime, locale.LongDateFormat.LTS, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LTS, locale));
                         break;
                     case State.L:
-                        result.Append(Format(dateTime, locale.LongDateFormat.L, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.L, locale));
                         break;
                     case State.LL:
-                        result.Append(Format(dateTime, locale.LongDateFormat.LL, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LL, locale));
                         break;
                     case State.LLL:
-                        result.Append(Format(dateTime, locale.LongDateFormat.LLL, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLL, locale));
                         break;
                     case State.LLLL:
-                        result.Append(Format(dateTime, locale.LongDateFormat.LLLL, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLLL, locale));
                         break;
                     case State.l:
-                        result.Append(Format(dateTime, locale.LongDateFormat.l, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.l, locale));
                         break;
                     case State.ll:
-                        result.Append(Format(dateTime, locale.LongDateFormat.ll, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ll, locale));
                         break;
                     case State.lll:
-                        result.Append(Format(dateTime, locale.LongDateFormat.lll, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.lll, locale));
                         break;
                     case State.llll:
-                        result.Append(Format(dateTime, locale.LongDateFormat.llll, locale));
+                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.llll, locale));
                         break;
                     case State.InSingleQuoteLiteral:
                     case State.InDoubleQuoteLiteral:
                     case State.EscapeSequence:
-                        foreach (char character in tokenBuffer.ToString()) result.Append(character);
+                        foreach (char character in tokenBuffer.ToString()) resultBuilder.Append(character);
                         break;
                 }
 
@@ -714,11 +718,11 @@ namespace MomentJs.Net.Formatters
                                 break;
                             case ':':
                                 state = changeState(state, State.None);
-                                result.Append(locale.Culture.DateTimeFormat.TimeSeparator);
+                                resultBuilder.Append(locale.Culture.DateTimeFormat.TimeSeparator);
                                 break;
                             case '/':
                                 state = changeState(state, State.None);
-                                result.Append(locale.Culture.DateTimeFormat.DateSeparator);
+                                resultBuilder.Append(locale.Culture.DateTimeFormat.DateSeparator);
                                 break;
                             case '\"':
                                 state = changeState(state, State.InDoubleQuoteLiteral);
@@ -734,7 +738,7 @@ namespace MomentJs.Net.Formatters
                                 break;
                             default:
                                 state = changeState(state, State.None);
-                                result.Append(character);
+                                resultBuilder.Append(character);
                                 break;
                         }
 
@@ -747,7 +751,11 @@ namespace MomentJs.Net.Formatters
 
             changeState(state, State.None);
 
-            return result.ToString();
+            string result = resultBuilder.ToString();
+            // Prevent stack overflow
+            if (result == format)
+                result = null;
+            return result;
         }
 
         private enum State
