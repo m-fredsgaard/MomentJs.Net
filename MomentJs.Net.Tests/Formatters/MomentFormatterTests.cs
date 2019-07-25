@@ -4,7 +4,7 @@ using MomentJs.Net.Formats;
 using MomentJs.Net.Formatters;
 using NUnit.Framework;
 
-namespace Moment.Net.Tests.Formatters
+namespace MomentJs.Net.Tests.Formatters
 {
     [TestFixture]
     public class MomentFormatterTests
