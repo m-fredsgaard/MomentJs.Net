@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Jint;
 using MomentJs.Net.Converters;
 using MomentJs.Net.Extensions;
 using MomentJs.Net.Formats;
@@ -29,19 +30,19 @@ namespace MomentJs.Net.Definitions
         {
             get
             {
-                if (_current == null || _current.Culture.Name != CultureInfo.CurrentCulture.Name)
+                if (_current != null && _current.Culture.Name == CultureInfo.CurrentCulture.Name)
+                    return _current;
+
+                ConstructorInfo constructor = typeof(T).GetConstructor(new[] {typeof(CultureInfo)});
+                if (constructor != null)
                 {
-                    ConstructorInfo constructor = typeof(T).GetConstructor(new[] {typeof(CultureInfo)});
+                    _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture}) as T;
+                }
+                else
+                {
+                    constructor = typeof(T).GetConstructor(new[] {typeof(string)});
                     if (constructor != null)
-                    {
-                        _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture}) as T;
-                    }
-                    else
-                    {
-                        constructor = typeof(T).GetConstructor(new[] {typeof(string)});
-                        if (constructor != null)
-                            _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture.Name}) as T;
-                    }
+                        _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture.Name}) as T;
                 }
 
                 return _current;
@@ -51,22 +52,6 @@ namespace MomentJs.Net.Definitions
 
     public abstract class LocaleDefinition
     {
-        private static readonly Dictionary<string, Func<int, string>> Ordinals =
-            new Dictionary<string, Func<int, string>>
-            {
-                {
-                    "en-US", i =>
-                    {
-                        int b = i % 10;
-                        string output = i % 100 / 10 == 1 ? "th" : b == 1 ? "st" : b == 2 ? "nd" : b == 3 ? "rd" : "th";
-                        return $"{i}{output}";
-                    }
-                },
-                {
-                    "da-DK", i => $"{i}."
-                }
-            };
-
         protected LocaleDefinition(CultureInfo culture)
         {
             Culture = culture;
@@ -107,8 +92,8 @@ namespace MomentJs.Net.Definitions
             };
             Calendar = new Calendar();
             RelativeTime = new RelativeTime();
-            DayOfMonthOrdinalParse = new Regex("");
-            Ordinal = string.Empty;
+            DayOfMonthOrdinalParse = new Regex("\\d{1,2}");
+            OrdinalFunction = "function (number) { return number; }";
             Week = new Week
             {
                 FirstDayOfWeek = (int) culture.DateTimeFormat.FirstDayOfWeek,
@@ -155,14 +140,32 @@ namespace MomentJs.Net.Definitions
         [JsonProperty("dayOfMonthOrdinalParse", Order = 11)]
         public Regex DayOfMonthOrdinalParse { get; set; }
 
-        [JsonProperty("ordinal", Order = 12)] public string Ordinal { get; set; }
+        [JsonProperty("ordinal", Order = 12)] public string OrdinalFunction { get; set; }
 
         [JsonProperty("week", Order = 13)] public Week Week { get; set; }
 
-        public string FormatOrdinal(int value)
+        public string Ordinal(int value)
         {
-            var ordinal = Ordinals.ContainsKey(Culture.Name) ? Ordinals[Culture.Name] : null;
-            return ordinal?.Invoke(value);
+            Engine engine = new Engine();
+            engine.SetValue("console", new
+            {
+                log = new Action<object>(x => Debug.WriteLine(x))
+            });
+
+            string javascript = OrdinalFunction.Trim();
+            string functionName;
+            if (javascript.StartsWith("function"))
+                functionName = javascript.Substring(8, javascript.IndexOf('(', 8) - 8).Trim();
+            else
+                return null;
+
+            if (string.IsNullOrWhiteSpace(functionName))
+            {
+                functionName = "ordinal";
+                javascript = javascript.Insert(8, " " + functionName);
+            }
+
+            return engine.Execute(javascript).GetValue(functionName).Invoke(value).AsString();
         }
     }
 }

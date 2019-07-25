@@ -31,7 +31,7 @@ namespace MomentJs.Net.Formatters
                         result.Append(dateTime.Month);
                         break;
                     case State.Mo:
-                        result.Append(locale.FormatOrdinal(dateTime.Month));
+                        result.Append(locale.Ordinal(dateTime.Month));
                         break;
                     case State.MM:
                         result.Append(dateTime.Month.ToString().PadLeft(2, '0'));
@@ -46,13 +46,13 @@ namespace MomentJs.Net.Formatters
                         result.Append((int) Math.Ceiling(dateTime.Month / 3.0));
                         break;
                     case State.Qo:
-                        result.Append(locale.FormatOrdinal((int) Math.Ceiling(dateTime.Month / 3.0)));
+                        result.Append(locale.Ordinal((int) Math.Ceiling(dateTime.Month / 3.0)));
                         break;
                     case State.D:
                         result.Append(dateTime.Day);
                         break;
                     case State.Do:
-                        result.Append(locale.FormatOrdinal(dateTime.Day));
+                        result.Append(locale.Ordinal(dateTime.Day));
                         break;
                     case State.DD:
                         result.Append(dateTime.Day.ToString().PadLeft(2, '0'));
@@ -61,7 +61,7 @@ namespace MomentJs.Net.Formatters
                         result.Append(dateTime.DayOfYear);
                         break;
                     case State.DDDo:
-                        result.Append(locale.FormatOrdinal(dateTime.DayOfYear));
+                        result.Append(locale.Ordinal(dateTime.DayOfYear));
                         break;
                     case State.DDDD:
                         result.Append(dateTime.DayOfYear.ToString().PadLeft(3, '0'));
@@ -70,7 +70,7 @@ namespace MomentJs.Net.Formatters
                         result.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.@do:
-                        result.Append(locale.FormatOrdinal((int) dateTime.DayOfWeek));
+                        result.Append(locale.Ordinal((int) dateTime.DayOfWeek));
                         break;
                     case State.dd:
                         result.Append(locale.WeekdaysMin[(int) dateTime.DayOfWeek]);
@@ -98,7 +98,7 @@ namespace MomentJs.Net.Formatters
                         break;
                     case State.wo:
                     case State.Wo:
-                        result.Append(locale.FormatOrdinal(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                        result.Append(locale.Ordinal(locale.Culture.Calendar.GetWeekOfYear(dateTime,
                             locale.Culture.DateTimeFormat.CalendarWeekRule,
                             locale.Culture.DateTimeFormat.FirstDayOfWeek)));
                         break;
