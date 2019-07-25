@@ -1,5 +1,4 @@
 using System;
-using MomentJs.Net;
 using MomentJs.Net.Definitions;
 using MomentJs.Net.Formats;
 using MomentJs.Net.Formatters;
@@ -148,7 +147,7 @@ namespace Moment.Net.Tests.Formatters
         {
             // Arrange
             LocaleDefinition localeDefinition = new StandardLocaleDefinition(culture);
-            
+
             // Act
             string result = MomentFormatter.Format(DateTime, format, localeDefinition);
 
@@ -158,12 +157,13 @@ namespace Moment.Net.Tests.Formatters
 
         [TestCase("dddd, MMMM D, YYYY h:mm A", "en-US", ExpectedResult = "Thursday, September 4, 1986 8:30 PM")]
         [TestCase("dddd, Do MMMM, YYYY HH:mm", "da-DK", ExpectedResult = "torsdag, 4. september, 1986 20:30")]
-        [TestCase("dddd, Do MMMM, YYYY 'YYYY' HH:mm", "da-DK", ExpectedResult = "torsdag, 4. september, 1986 YYYY 20:30")]
+        [TestCase("dddd, Do MMMM, YYYY 'YYYY' HH:mm", "da-DK", ExpectedResult =
+            "torsdag, 4. september, 1986 YYYY 20:30")]
         public string CustomFormat_With_StandardLocaleDefinition(string format, string culture)
         {
             // Arrange
             LocaleDefinition localeDefinition = new StandardLocaleDefinition(culture);
-            
+
             // Act
             string result = MomentFormatter.Format(DateTime, format, localeDefinition);
 

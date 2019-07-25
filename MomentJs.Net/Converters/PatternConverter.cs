@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Text;
 using MomentJs.Net.Definitions;
+using MomentJs.Net.Exceptions;
 using MomentJs.Net.Formats;
 
 namespace MomentJs.Net.Converters
 {
     public class PatternConverter
     {
-        public static string ConvertToMomentPattern(string standardPattern, LocaleDefinition locale, MomentFormat format, bool tolerant = true)
+        public static string ConvertToMomentPattern(string standardPattern, LocaleDefinition locale,
+            MomentFormat format, bool tolerant = true)
         {
             StringBuilder result = new StringBuilder();
 
             State state = State.None;
             StringBuilder tokenBuffer = new StringBuilder();
 
-            var changeState = new Func<State, State, State>((currentState,  newState) =>
+            var changeState = new Func<State, State, State>((currentState, newState) =>
             {
                 switch (currentState)
                 {
@@ -108,63 +110,43 @@ namespace MomentJs.Net.Converters
                         break;
                     case State.t:
                         if (tolerant)
-                        {
                             result.Append("A");
-                        }
                         else
-                        {
                             throw new UnsupportedFormatException("Single Letter AM/PM not supported in MomentJS");
-                        }
                         break;
                     case State.tt:
                         result.Append("A");
                         break;
                     case State.y:
                         if (tolerant)
-                        {
                             result.Append("YY");
-                        }
                         else
-                        {
                             throw new UnsupportedFormatException("Single Letter Year not supported in MomentJS");
-                        }
                         break;
                     case State.yy:
                         result.Append("YY");
                         break;
                     case State.yyy:
                         if (tolerant)
-                        {
                             result.Append("YYYY");
-                        }
                         else
-                        {
                             throw new UnsupportedFormatException("Three Letter Year not supported in MomentJS");
-                        }
                         break;
                     case State.yyyy:
                         result.Append("YYYY");
                         break;
                     case State.yyyyy:
-                        if(tolerant)
-                        {
+                        if (tolerant)
                             result.Append("Y");
-                        }
                         else
-                        {
                             throw new UnsupportedFormatException("Five or more Letter Year not supported in MomentJS");
-                        }
                         break;
                     case State.z:
                     case State.zz:
                         if (tolerant)
-                        {
                             result.Append("ZZ");
-                        }
                         else
-                        {
                             throw new UnsupportedFormatException("Hours offset not supported in MomentJS");
-                        }
                         break;
                     case State.zzz:
                         result.Append("Z");
@@ -172,10 +154,7 @@ namespace MomentJs.Net.Converters
                     case State.InSingleQuoteLiteral:
                     case State.InDoubleQuoteLiteral:
                     case State.EscapeSequence:
-                        foreach (var lCharacter in tokenBuffer.ToString())
-                        {
-                            result.Append(lCharacter);
-                        }
+                        foreach (char lCharacter in tokenBuffer.ToString()) result.Append(lCharacter);
                         break;
                 }
 
@@ -183,8 +162,7 @@ namespace MomentJs.Net.Converters
                 return newState;
             }); // End ChangeState
 
-            foreach (var character in standardPattern)
-            {
+            foreach (char character in standardPattern)
                 if (state == State.EscapeSequence)
                 {
                     tokenBuffer.Append(character);
@@ -193,24 +171,16 @@ namespace MomentJs.Net.Converters
                 else if (state == State.InDoubleQuoteLiteral)
                 {
                     if (character == '\"')
-                    {
                         state = changeState(state, State.None);
-                    }
                     else
-                    {
                         tokenBuffer.Append(character);
-                    }
                 }
                 else if (state == State.InSingleQuoteLiteral)
                 {
                     if (character == '\'')
-                    {
                         state = changeState(state, State.None);
-                    }
                     else
-                    {
                         tokenBuffer.Append(character);
-                    }
                 }
                 else
                 {
@@ -234,6 +204,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.d);
                                     break;
                             }
+
                             break;
                         case 'f':
                             switch (state)
@@ -262,6 +233,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.f);
                                     break;
                             }
+
                             break;
                         case 'F':
                             switch (state)
@@ -290,6 +262,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.F);
                                     break;
                             }
+
                             break;
                         case 'g':
                             switch (state)
@@ -300,6 +273,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.g);
                                     break;
                             }
+
                             break;
                         case 'h':
                             switch (state)
@@ -313,6 +287,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.h);
                                     break;
                             }
+
                             break;
                         case 'H':
                             switch (state)
@@ -326,17 +301,14 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.H);
                                     break;
                             }
+
                             break;
                         case 'K':
                             state = changeState(state, State.None);
                             if (tolerant)
-                            {
                                 result.Append("Z");
-                            }
                             else
-                            {
                                 throw new UnsupportedFormatException("TimeZoneInformation not supported in MomentJS");
-                            }
                             break;
                         case 'm':
                             switch (state)
@@ -350,6 +322,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.m);
                                     break;
                             }
+
                             break;
                         case 'M':
                             switch (state)
@@ -369,6 +342,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.M);
                                     break;
                             }
+
                             break;
                         case 's':
                             switch (state)
@@ -382,6 +356,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.s);
                                     break;
                             }
+
                             break;
                         case 't':
                             switch (state)
@@ -395,6 +370,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.t);
                                     break;
                             }
+
                             break;
                         case 'y':
                             switch (state)
@@ -417,6 +393,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.y);
                                     break;
                             }
+
                             break;
                         case 'z':
                             switch (state)
@@ -433,6 +410,7 @@ namespace MomentJs.Net.Converters
                                     state = changeState(state, State.z);
                                     break;
                             }
+
                             break;
                         case ':':
                             state = changeState(state, State.None);
@@ -460,12 +438,9 @@ namespace MomentJs.Net.Converters
                             break;
                     }
                 }
-            }
 
-            if (state == State.EscapeSequence || state == State.InDoubleQuoteLiteral || state == State.InSingleQuoteLiteral)
-            {
-                throw new FormatException("Invalid Format String");
-            }
+            if (state == State.EscapeSequence || state == State.InDoubleQuoteLiteral ||
+                state == State.InSingleQuoteLiteral) throw new FormatException("Invalid Format String");
 
             changeState(state, State.None);
 
@@ -520,11 +495,5 @@ namespace MomentJs.Net.Converters
             InDoubleQuoteLiteral,
             EscapeSequence
         }
-    }
-
-    public class UnsupportedFormatException : Exception
-    {
-        public UnsupportedFormatException (string message): base(message)
-        { }
     }
 }

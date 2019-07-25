@@ -2,6 +2,7 @@
 using System.Text;
 using MomentJs.Net.Converters;
 using MomentJs.Net.Definitions;
+using MomentJs.Net.Exceptions;
 using MomentJs.Net.Formats;
 
 namespace MomentJs.Net.Formatters
@@ -43,10 +44,10 @@ namespace MomentJs.Net.Formatters
                         result.Append(locale.Months[dateTime.Month - 1]);
                         break;
                     case State.Q:
-                        result.Append((int)Math.Ceiling(dateTime.Month / 3.0));
+                        result.Append((int) Math.Ceiling(dateTime.Month / 3.0));
                         break;
                     case State.Qo:
-                        result.Append(locale.FormatOrdinal((int)Math.Ceiling(dateTime.Month / 3.0)));
+                        result.Append(locale.FormatOrdinal((int) Math.Ceiling(dateTime.Month / 3.0)));
                         break;
                     case State.D:
                         result.Append(dateTime.Day);
@@ -67,40 +68,46 @@ namespace MomentJs.Net.Formatters
                         result.Append(dateTime.DayOfYear.ToString().PadLeft(3, '0'));
                         break;
                     case State.d:
-                        result.Append((int)dateTime.DayOfWeek);
+                        result.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.@do:
                         result.Append(locale.FormatOrdinal((int) dateTime.DayOfWeek));
                         break;
                     case State.dd:
-                        result.Append(locale.WeekdaysMin[(int)dateTime.DayOfWeek]);
+                        result.Append(locale.WeekdaysMin[(int) dateTime.DayOfWeek]);
                         break;
                     case State.ddd:
-                        result.Append(locale.WeekdaysShort[(int)dateTime.DayOfWeek]);
+                        result.Append(locale.WeekdaysShort[(int) dateTime.DayOfWeek]);
                         break;
                     case State.dddd:
-                        result.Append(locale.Weekdays[(int)dateTime.DayOfWeek]);
+                        result.Append(locale.Weekdays[(int) dateTime.DayOfWeek]);
                         break;
                     case State.e:
-                        result.Append((int)dateTime.DayOfWeek);
+                        result.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.E:
-                        int dayOfWeek = (int)dateTime.DayOfWeek - (int)locale.Culture.DateTimeFormat.FirstDayOfWeek;
+                        int dayOfWeek = (int) dateTime.DayOfWeek - (int) locale.Culture.DateTimeFormat.FirstDayOfWeek;
                         if (dayOfWeek < 0)
                             dayOfWeek = 7 + dayOfWeek;
                         result.Append(dayOfWeek);
                         break;
                     case State.w:
                     case State.W:
-                        result.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime, locale.Culture.DateTimeFormat.CalendarWeekRule, locale.Culture.DateTimeFormat.FirstDayOfWeek));
+                        result.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                            locale.Culture.DateTimeFormat.CalendarWeekRule,
+                            locale.Culture.DateTimeFormat.FirstDayOfWeek));
                         break;
                     case State.wo:
                     case State.Wo:
-                        result.Append(locale.FormatOrdinal(locale.Culture.Calendar.GetWeekOfYear(dateTime, locale.Culture.DateTimeFormat.CalendarWeekRule, locale.Culture.DateTimeFormat.FirstDayOfWeek)));
+                        result.Append(locale.FormatOrdinal(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                            locale.Culture.DateTimeFormat.CalendarWeekRule,
+                            locale.Culture.DateTimeFormat.FirstDayOfWeek)));
                         break;
                     case State.ww:
                     case State.WW:
-                        result.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime, locale.Culture.DateTimeFormat.CalendarWeekRule, locale.Culture.DateTimeFormat.FirstDayOfWeek).ToString().PadLeft(2, '0'));
+                        result.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
+                            locale.Culture.DateTimeFormat.CalendarWeekRule,
+                            locale.Culture.DateTimeFormat.FirstDayOfWeek).ToString().PadLeft(2, '0'));
                         break;
                     case State.Y:
                         result.Append(dateTime.Year.ToString());
@@ -110,7 +117,8 @@ namespace MomentJs.Net.Formatters
                         break;
                     case State.YYYY:
                         if (dateTime.Year > 9999)
-                            throw new UnsupportedFormatException("The YYYY format doesn't support years above 9999. Use Y instead.");
+                            throw new UnsupportedFormatException(
+                                "The YYYY format doesn't support years above 9999. Use Y instead.");
                         result.Append(dateTime.Year.ToString());
                         break;
                     case State.gg:
@@ -118,7 +126,8 @@ namespace MomentJs.Net.Formatters
                         break;
                     case State.gggg:
                         if (dateTime.Year > 9999)
-                            throw new UnsupportedFormatException("The gggg format doesn't support years above 9999. Use Y instead.");
+                            throw new UnsupportedFormatException(
+                                "The gggg format doesn't support years above 9999. Use Y instead.");
                         result.Append(dateTime.Year.ToString());
                         break;
                     case State.GG:
@@ -126,7 +135,8 @@ namespace MomentJs.Net.Formatters
                         break;
                     case State.GGGG:
                         if (dateTime.Year > 9999)
-                            throw new UnsupportedFormatException("The gggg format doesn't support years above 9999. Use Y instead.");
+                            throw new UnsupportedFormatException(
+                                "The gggg format doesn't support years above 9999. Use Y instead.");
                         result.Append(dateTime.Year.ToString());
                         break;
                     case State.A:
@@ -158,10 +168,10 @@ namespace MomentJs.Net.Formatters
                         result.Append(hh.ToString().PadLeft(2, '0'));
                         break;
                     case State.k:
-                        result.Append(dateTime.Hour+1);
+                        result.Append(dateTime.Hour + 1);
                         break;
                     case State.kk:
-                        result.Append((dateTime.Hour+1).ToString().PadLeft(2, '0'));
+                        result.Append((dateTime.Hour + 1).ToString().PadLeft(2, '0'));
                         break;
                     case State.m:
                         result.Append(dateTime.Minute);
@@ -177,15 +187,15 @@ namespace MomentJs.Net.Formatters
                         break;
                     case State.S:
                         string valueS = dateTime.Millisecond.ToString();
-                        result.Append(valueS.Substring(0, Math.Min(valueS.Length, 1)).PadLeft(1,'0'));
+                        result.Append(valueS.Substring(0, Math.Min(valueS.Length, 1)).PadLeft(1, '0'));
                         break;
                     case State.SS:
                         string upperS2 = dateTime.Millisecond.ToString();
-                        result.Append(upperS2.Substring(0, Math.Min(upperS2.Length, 2)).PadLeft(2,'0'));
+                        result.Append(upperS2.Substring(0, Math.Min(upperS2.Length, 2)).PadLeft(2, '0'));
                         break;
                     case State.SSS:
                         string upperS3 = dateTime.Millisecond.ToString();
-                        result.Append(upperS3.Substring(0, Math.Min(upperS3.Length, 3)).PadLeft(3,'0'));
+                        result.Append(upperS3.Substring(0, Math.Min(upperS3.Length, 3)).PadLeft(3, '0'));
                         break;
                     case State.Z:
                         TimeSpan upperZ = new DateTimeOffset(dateTime).Offset;
@@ -238,10 +248,7 @@ namespace MomentJs.Net.Formatters
                     case State.InSingleQuoteLiteral:
                     case State.InDoubleQuoteLiteral:
                     case State.EscapeSequence:
-                        foreach (char character in tokenBuffer.ToString())
-                        {
-                            result.Append(character);
-                        }
+                        foreach (char character in tokenBuffer.ToString()) result.Append(character);
                         break;
                 }
 
@@ -250,7 +257,6 @@ namespace MomentJs.Net.Formatters
             }); // End ChangeState
 
             foreach (char character in format)
-            {
                 switch (state)
                 {
                     case State.EscapeSequence:
@@ -282,6 +288,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'A':
                                 switch (state)
@@ -293,6 +300,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'd':
                                 switch (state)
@@ -313,6 +321,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'D':
                                 switch (state)
@@ -333,6 +342,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'e':
                                 switch (state)
@@ -344,6 +354,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'E':
                                 switch (state)
@@ -355,6 +366,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'g':
                                 switch (state)
@@ -375,6 +387,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'G':
                                 switch (state)
@@ -395,6 +408,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'h':
                                 switch (state)
@@ -409,6 +423,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'H':
                                 switch (state)
@@ -423,6 +438,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'k':
                                 switch (state)
@@ -437,6 +453,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'l':
                                 switch (state)
@@ -457,6 +474,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'L':
                                 switch (state)
@@ -477,6 +495,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'm':
                                 switch (state)
@@ -491,6 +510,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'M':
                                 switch (state)
@@ -511,6 +531,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'o':
                                 switch (state)
@@ -540,6 +561,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'Q':
                                 switch (state)
@@ -551,6 +573,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 's':
                                 switch (state)
@@ -565,6 +588,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'S':
                                 switch (state)
@@ -585,6 +609,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'T':
                                 switch (state)
@@ -596,6 +621,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'w':
                                 switch (state)
@@ -610,6 +636,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'W':
                                 switch (state)
@@ -624,6 +651,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'Y':
                                 switch (state)
@@ -644,6 +672,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'Z':
                                 switch (state)
@@ -658,6 +687,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'x':
                                 switch (state)
@@ -669,6 +699,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case 'X':
                                 switch (state)
@@ -680,6 +711,7 @@ namespace MomentJs.Net.Formatters
                                         state = State.Invalid;
                                         break;
                                 }
+
                                 break;
                             case ':':
                                 state = changeState(state, State.None);
@@ -706,11 +738,12 @@ namespace MomentJs.Net.Formatters
                                 result.Append(character);
                                 break;
                         }
+
                         break;
                 }
-            }
 
-            if (state == State.EscapeSequence || state == State.InDoubleQuoteLiteral || state == State.InSingleQuoteLiteral)
+            if (state == State.EscapeSequence || state == State.InDoubleQuoteLiteral ||
+                state == State.InSingleQuoteLiteral)
                 throw new FormatException("Invalid format string");
 
             changeState(state, State.None);

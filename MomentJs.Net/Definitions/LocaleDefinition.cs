@@ -58,7 +58,7 @@ namespace MomentJs.Net.Definitions
         {
             Culture = culture;
 
-            Months = culture.DateTimeFormat.MonthNames.Select(x => StringExtensions.NullIfEmpty(x)).SkipNulls().ToArray();
+            Months = culture.DateTimeFormat.MonthNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
             MonthsShort = culture.DateTimeFormat.AbbreviatedMonthNames.Select(x => x.NullIfEmpty()).SkipNulls()
                 .ToArray();
             MonthsParseExact = true;
