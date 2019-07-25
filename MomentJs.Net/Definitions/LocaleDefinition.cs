@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using MomentJs.Net.Converters;
 using MomentJs.Net.Extensions;
@@ -15,11 +16,12 @@ namespace MomentJs.Net.Definitions
     {
         private static T _current;
 
-        protected LocaleDefinition(CultureInfo culture, Func<int, string> ordinal = null) : base(culture, ordinal)
+        protected LocaleDefinition(CultureInfo culture) : base(culture)
         {
         }
 
-        public LocaleDefinition(string cultureName, Func<int, string> ordinal = null) : base(cultureName, ordinal)
+        // ReSharper disable once MemberCanBeProtected.Global
+        public LocaleDefinition(string culture) : base(culture)
         {
         }
 
@@ -27,9 +29,20 @@ namespace MomentJs.Net.Definitions
         {
             get
             {
-                if (_current == null || _current.Culture.Name == CultureInfo.CurrentCulture.Name)
-                    _current = typeof(T).GetConstructor(new[] {typeof(CultureInfo)})
-                        ?.Invoke(new object[] {CultureInfo.CurrentCulture}) as T;
+                if (_current == null || _current.Culture.Name != CultureInfo.CurrentCulture.Name)
+                {
+                    ConstructorInfo constructor = typeof(T).GetConstructor(new[] {typeof(CultureInfo)});
+                    if (constructor != null)
+                    {
+                        _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture}) as T;
+                    }
+                    else
+                    {
+                        constructor = typeof(T).GetConstructor(new[] {typeof(string)});
+                        if (constructor != null)
+                            _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture.Name}) as T;
+                    }
+                }
 
                 return _current;
             }
@@ -54,7 +67,7 @@ namespace MomentJs.Net.Definitions
                 }
             };
 
-        protected LocaleDefinition(CultureInfo culture, Func<int, string> ordinal = null)
+        protected LocaleDefinition(CultureInfo culture)
         {
             Culture = culture;
 
@@ -104,8 +117,8 @@ namespace MomentJs.Net.Definitions
             };
         }
 
-        protected LocaleDefinition(string cultureName, Func<int, string> ordinal = null)
-            : this(new CultureInfo(cultureName), ordinal)
+        protected LocaleDefinition(string cultureName)
+            : this(new CultureInfo(cultureName))
         {
         }
 
@@ -149,7 +162,7 @@ namespace MomentJs.Net.Definitions
         public string FormatOrdinal(int value)
         {
             var ordinal = Ordinals.ContainsKey(Culture.Name) ? Ordinals[Culture.Name] : null;
-            return ordinal?.Invoke(value) ?? null;
+            return ordinal?.Invoke(value);
         }
     }
 }
