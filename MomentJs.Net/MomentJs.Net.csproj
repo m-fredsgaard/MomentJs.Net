@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
+    <Authors>m-fredsgaard</Authors>
+    <Company>GenericShape</Company>
+    <PackageLicenseFile></PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/m-fredsgaard/MomentJs.Net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/m-fredsgaard/MomentJs.Net</RepositoryUrl>
+    <PackageTags>momentjs</PackageTags>
+    <Copyright></Copyright>
+    <Description>A .net implementation of momentjs</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Jint" Version="2.11.58" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+</Project>
