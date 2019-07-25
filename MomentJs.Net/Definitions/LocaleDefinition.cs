@@ -1,10 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Jint;
 using MomentJs.Net.Converters;
 using MomentJs.Net.Extensions;
 using MomentJs.Net.Formats;
@@ -93,7 +90,7 @@ namespace MomentJs.Net.Definitions
             Calendar = new Calendar();
             RelativeTime = new RelativeTime();
             DayOfMonthOrdinalParse = new Regex("\\d{1,2}");
-            OrdinalFunction = "function (number) { return number; }";
+            Ordinal = "function (number) { return number; }";
             Week = new Week
             {
                 FirstDayOfWeek = (int) culture.DateTimeFormat.FirstDayOfWeek,
@@ -138,34 +135,14 @@ namespace MomentJs.Net.Definitions
         public RelativeTime RelativeTime { get; set; }
 
         [JsonProperty("dayOfMonthOrdinalParse", Order = 11)]
+        [JsonConverter(typeof(DayOfMonthOrdinalParseJsonConverter))]
         public Regex DayOfMonthOrdinalParse { get; set; }
 
-        [JsonProperty("ordinal", Order = 12)] public string OrdinalFunction { get; set; }
+
+        [JsonProperty("ordinal", Order = 12)]
+        [JsonConverter(typeof(OrdinalJsonConverter))]
+        public Ordinal Ordinal { get; set; }
 
         [JsonProperty("week", Order = 13)] public Week Week { get; set; }
-
-        public string Ordinal(int value)
-        {
-            Engine engine = new Engine();
-            engine.SetValue("console", new
-            {
-                log = new Action<object>(x => Debug.WriteLine(x))
-            });
-
-            string javascript = OrdinalFunction.Trim();
-            string functionName;
-            if (javascript.StartsWith("function"))
-                functionName = javascript.Substring(8, javascript.IndexOf('(', 8) - 8).Trim();
-            else
-                return null;
-
-            if (string.IsNullOrWhiteSpace(functionName))
-            {
-                functionName = "ordinal";
-                javascript = javascript.Insert(8, " " + functionName);
-            }
-
-            return engine.Execute(javascript).GetValue(functionName).Invoke(value).AsString();
-        }
     }
 }

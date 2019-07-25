@@ -146,7 +146,7 @@ namespace MomentJs.Net.Tests.Formatters
         public string StandardFormat_With_StandardLocaleDefinition(MomentFormat format, string culture)
         {
             // Arrange
-            LocaleDefinition localeDefinition = new StandardLocaleDefinition(culture);
+            LocaleDefinition localeDefinition = GetLocaleDefinition(culture);
 
             // Act
             string result = MomentFormatter.Format(DateTime, format, localeDefinition);
@@ -155,6 +155,7 @@ namespace MomentJs.Net.Tests.Formatters
             return result;
         }
 
+
         [TestCase("dddd, MMMM D, YYYY h:mm A", "en-US", ExpectedResult = "Thursday, September 4, 1986 8:30 PM")]
         [TestCase("dddd, Do MMMM, YYYY HH:mm", "da-DK", ExpectedResult = "torsdag, 4. september, 1986 20:30")]
         [TestCase("dddd, Do MMMM, YYYY 'YYYY' HH:mm", "da-DK", ExpectedResult =
@@ -162,13 +163,35 @@ namespace MomentJs.Net.Tests.Formatters
         public string CustomFormat_With_StandardLocaleDefinition(string format, string culture)
         {
             // Arrange
-            LocaleDefinition localeDefinition = new StandardLocaleDefinition(culture);
+            LocaleDefinition localeDefinition = GetLocaleDefinition(culture);
 
             // Act
             string result = MomentFormatter.Format(DateTime, format, localeDefinition);
 
             // Assert
             return result;
+        }
+
+        private static LocaleDefinition GetLocaleDefinition(string culture)
+        {
+            StandardLocaleDefinition standardLocaleDefinition = new StandardLocaleDefinition(culture);
+            switch (culture)
+            {
+                case "en-US":
+                    standardLocaleDefinition.Ordinal = @"function (number) { var b = number % 10,
+            output = (~~(number % 100 / 10) === 1) ? 'th' :
+            (b === 1) ? 'st' :
+            (b === 2) ? 'nd' :
+            (b === 3) ? 'rd' : 'th';
+            console.log(output);
+        return number + output; }";
+                    break;
+                case "da-DK":
+                    standardLocaleDefinition.Ordinal = @"function (number){return number+'.';}";
+                    break;
+            }
+
+            return standardLocaleDefinition;
         }
     }
 }

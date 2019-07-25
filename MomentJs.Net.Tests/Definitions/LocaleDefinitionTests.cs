@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using MomentJs.Net.Definitions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 // ReSharper disable once ClassNeverInstantiated.Local
@@ -27,8 +28,8 @@ namespace MomentJs.Net.Tests.Definitions
                 switch (culture)
                 {
                     case "en-US":
-                        OrdinalFunction = @"function (number) { var b = number % 10,
-            output = (~~(number % 100 / 10) === 1) ? 'th' :
+                        Ordinal = @"function (number) { var b = number % 10,
+            output = ((number % 100 / 10) === 1) ? 'th' :
             (b === 1) ? 'st' :
             (b === 2) ? 'nd' :
             (b === 3) ? 'rd' : 'th';
@@ -36,33 +37,10 @@ namespace MomentJs.Net.Tests.Definitions
         return number + output; }";
                         break;
                     case "da-DK":
-                        OrdinalFunction = @"function test(value){return value+'.';}";
+                        Ordinal = @"function test(value){return value+'.';}";
                         break;
                 }
             }
-        }
-
-        [Test]
-        public void Current_ChangeCulture()
-        {
-            // Arrange
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            TestLocalDefinition enUsLocale = TestLocalDefinition.Current;
-
-            Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo("en-US"));
-
-            // Act
-            CultureInfo.CurrentCulture = new CultureInfo("da-DK");
-
-            Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo("da-DK"));
-
-            TestLocalDefinition daDkLocale = TestLocalDefinition.Current;
-
-            // Assert
-            Assert.That(enUsLocale, Is.Not.Null);
-            Assert.That(daDkLocale, Is.Not.Null);
-            Assert.That(enUsLocale.Culture.Name, Is.EqualTo("en-US"));
-            Assert.That(daDkLocale.Culture.Name, Is.EqualTo("da-DK"));
         }
 
         [TestCase(1, "en-US", ExpectedResult = "1st")]
@@ -88,8 +66,43 @@ namespace MomentJs.Net.Tests.Definitions
         public string Ordinal(int value, string culture)
         {
             TestLocalDefinition localDefinition = new TestLocalDefinition(culture);
-            return localDefinition.Ordinal(value);
+            return localDefinition.Ordinal.Format(value);
+        }
 
+        [Test]
+        public void Current_ChangeCulture()
+        {
+            // Arrange
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            TestLocalDefinition enUsLocale = TestLocalDefinition.Current;
+
+            Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo("en-US"));
+
+            // Act
+            CultureInfo.CurrentCulture = new CultureInfo("da-DK");
+
+            Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo("da-DK"));
+
+            TestLocalDefinition daDkLocale = TestLocalDefinition.Current;
+
+            // Assert
+            Assert.That(enUsLocale, Is.Not.Null);
+            Assert.That(daDkLocale, Is.Not.Null);
+            Assert.That(enUsLocale.Culture.Name, Is.EqualTo("en-US"));
+            Assert.That(daDkLocale.Culture.Name, Is.EqualTo("da-DK"));
+        }
+
+        [Test]
+        public void Serialize_LocaleDefinition()
+        {
+            // Arrange
+            TestLocalDefinition localDefinition = new TestLocalDefinition("en-US");
+
+            // Act
+            var result = JsonConvert.SerializeObject(localDefinition);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
         }
     }
 }
