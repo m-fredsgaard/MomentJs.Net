@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Globalization;
 using System.Text;
-using Moment.Net.Converters;
-using Moment.Net.Formats;
+using MomentJs.Net.Converters;
+using MomentJs.Net.Definitions;
+using MomentJs.Net.Formats;
 
-namespace Moment.Net.Formatters
+namespace MomentJs.Net.Formatters
 {
     public static class MomentFormatter
     {

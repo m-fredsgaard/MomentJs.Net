@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Text;
-using Moment.Net.Formats;
+using MomentJs.Net.Definitions;
+using MomentJs.Net.Formats;
 
-namespace Moment.Net.Converters
+namespace MomentJs.Net.Converters
 {
     public class PatternConverter
     {

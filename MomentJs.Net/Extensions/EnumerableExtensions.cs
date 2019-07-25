@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Moment.Net.Extensions
+namespace MomentJs.Net.Extensions
 {
     public static class EnumerableExtensions
     {

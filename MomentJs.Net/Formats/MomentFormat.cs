@@ -1,4 +1,4 @@
-﻿namespace Moment.Net.Formats
+﻿namespace MomentJs.Net.Formats
 {
     public enum MomentFormat
     {

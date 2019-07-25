@@ -1,6 +1,8 @@
 using System;
-using Moment.Net.Formats;
-using Moment.Net.Formatters;
+using MomentJs.Net;
+using MomentJs.Net.Definitions;
+using MomentJs.Net.Formats;
+using MomentJs.Net.Formatters;
 using NUnit.Framework;
 
 namespace Moment.Net.Tests.Formatters

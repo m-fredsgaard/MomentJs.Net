@@ -1,4 +1,4 @@
-﻿namespace Moment.Net.Extensions
+﻿namespace MomentJs.Net.Extensions
 {
     public static class StringExtensions
     {
