@@ -219,34 +219,44 @@ namespace MomentJs.Net.Formatters
                         resultBuilder.Append(x.ToUnixTimeMilliseconds());
                         break;
                     case State.LT:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LT, locale));
+                        if (locale.LongDateFormat.LT != "LT")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LT, locale));
                         break;
                     case State.LTS:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LTS, locale));
+                        if (locale.LongDateFormat.LT != "LTS")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LTS, locale));
                         break;
                     case State.L:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.L, locale));
+                        if (locale.LongDateFormat.LT != "L")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.L, locale));
                         break;
                     case State.LL:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LL, locale));
+                        if (locale.LongDateFormat.LT != "LL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LL, locale));
                         break;
                     case State.LLL:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLL, locale));
+                        if (locale.LongDateFormat.LT != "LLL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLL, locale));
                         break;
                     case State.LLLL:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLLL, locale));
+                        if (locale.LongDateFormat.LT != "LLLL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLLL, locale));
                         break;
                     case State.l:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.l, locale));
+                        if (locale.LongDateFormat.LT != "l")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.l, locale));
                         break;
                     case State.ll:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ll, locale));
+                        if (locale.LongDateFormat.LT != "ll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ll, locale));
                         break;
                     case State.lll:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.lll, locale));
+                        if (locale.LongDateFormat.LT != "lll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.lll, locale));
                         break;
                     case State.llll:
-                        resultBuilder.Append(Format(dateTime, locale.LongDateFormat.llll, locale));
+                        if (locale.LongDateFormat.LT != "llll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.llll, locale));
                         break;
                     case State.InSingleQuoteLiteral:
                     case State.InDoubleQuoteLiteral:
@@ -751,11 +761,7 @@ namespace MomentJs.Net.Formatters
 
             changeState(state, State.None);
 
-            string result = resultBuilder.ToString();
-            // Prevent stack overflow
-            if (result == format)
-                result = null;
-            return result;
+            return resultBuilder.ToString();
         }
 
         private enum State
