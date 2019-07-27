@@ -1,2 +1,2 @@
 # Moment.Net
-A .net implementation of momentjs
+A .net implementation of momentjs, with seamless collaboration between client and server as main focus.

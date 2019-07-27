@@ -4,12 +4,14 @@ using MomentJs.Net.Definitions;
 using MomentJs.Net.Exceptions;
 using MomentJs.Net.Formats;
 
+// ReSharper disable InconsistentNaming
+
 namespace MomentJs.Net.Converters
 {
     public class PatternConverter
     {
         public static string ConvertToMomentPattern(string standardPattern, LocaleDefinition locale,
-            MomentFormat format, bool tolerant = true)
+            DateFormat format, bool tolerant = true)
         {
             StringBuilder result = new StringBuilder();
 
@@ -20,18 +22,18 @@ namespace MomentJs.Net.Converters
             {
                 switch (currentState)
                 {
-                    case State.d when format != MomentFormat.L:
-                    case State.dd when format == MomentFormat.l:
+                    case State.d when format != DateFormat.L:
+                    case State.dd when format == DateFormat.l:
                         result.Append("D");
                         break;
-                    case State.d when format == MomentFormat.L:
+                    case State.d when format == DateFormat.L:
                     case State.dd:
                         result.Append("DD");
                         break;
                     case State.ddd:
-                    case State.dddd when format == MomentFormat.ll:
-                    case State.dddd when format == MomentFormat.lll:
-                    case State.dddd when format == MomentFormat.llll:
+                    case State.dddd when format == DateFormat.ll:
+                    case State.dddd when format == DateFormat.lll:
+                    case State.dddd when format == DateFormat.llll:
                         result.Append("ddd");
                         break;
                     case State.dddd:
@@ -85,18 +87,18 @@ namespace MomentJs.Net.Converters
                     case State.mm:
                         result.Append("mm");
                         break;
-                    case State.M when format != MomentFormat.L:
-                    case State.MM when format == MomentFormat.l:
+                    case State.M when format != DateFormat.L:
+                    case State.MM when format == DateFormat.l:
                         result.Append("M");
                         break;
-                    case State.M when format == MomentFormat.L:
+                    case State.M when format == DateFormat.L:
                     case State.MM:
                         result.Append("MM");
                         break;
                     case State.MMM:
-                    case State.MMMM when format == MomentFormat.ll:
-                    case State.MMMM when format == MomentFormat.lll:
-                    case State.MMMM when format == MomentFormat.llll:
+                    case State.MMMM when format == DateFormat.ll:
+                    case State.MMMM when format == DateFormat.lll:
+                    case State.MMMM when format == DateFormat.llll:
                         result.Append("MMM");
                         break;
                     case State.MMMM:

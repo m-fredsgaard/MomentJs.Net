@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.3-alpha</Version>
+    <Version>0.1.9-alpha</Version>
     <Authors>m-fredsgaard</Authors>
     <Company>GenericShape</Company>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
@@ -12,9 +12,9 @@
     <PackageTags>momentjs</PackageTags>
     <Copyright></Copyright>
     <Description>A .net implementation of momentjs</Description>
-    <AssemblyVersion>0.1.3.0</AssemblyVersion>
-    <FileVersion>0.1.3.0</FileVersion>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,9 +28,5 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="@echo off&#xD;&#xA;set nugetpath=%25NUGET_PATH%25&#xD;&#xA;if &quot;%25nugetpath%25&quot; NEQ &quot;&quot; (&#xD;&#xA;  echo Copy to: %25nugetpath%25&#xD;&#xA;    for /f &quot;tokens=*&quot; %25%25G in ('dir /s /b /a:-d &quot;debug&quot; &quot;MomentJs.Net*.nupkg&quot;') do  ( &#xD;&#xA;      copy /Y %25%25G %25nugetpath%25\&#xD;&#xA;    )&#xD;&#xA;)&#xD;&#xA;" />
-  </Target>
 
 </Project>

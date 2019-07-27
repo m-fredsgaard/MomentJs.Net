@@ -28,16 +28,17 @@ namespace MomentJs.Net.Tests.Definitions
                 switch (culture)
                 {
                     case "en-US":
-                        Ordinal = @"function (number) { var b = number % 10,
-            output = ((number % 100 / 10) === 1) ? 'th' :
-            (b === 1) ? 'st' :
-            (b === 2) ? 'nd' :
-            (b === 3) ? 'rd' : 'th';
-            console.log(output);
-        return number + output; }";
+                        Ordinal = () => @"function (number) { 
+	var b = number % 10,
+	output = ((number % 100 / 10) === 1) ? 'th' :
+		(b === 1) ? 'st' :
+		(b === 2) ? 'nd' :
+		(b === 3) ? 'rd' : 'th';
+	return number + output;
+}";
                         break;
                     case "da-DK":
-                        Ordinal = @"function test(value){return value+'.';}";
+                        Ordinal = () => @"function test(value){return value+'.';}";
                         break;
                 }
             }
@@ -66,7 +67,7 @@ namespace MomentJs.Net.Tests.Definitions
         public string Ordinal(int value, string culture)
         {
             TestLocalDefinition localDefinition = new TestLocalDefinition(culture);
-            return localDefinition.Ordinal.Format(value);
+            return localDefinition.Ordinal().Format(value);
         }
 
         [Test]
@@ -96,7 +97,10 @@ namespace MomentJs.Net.Tests.Definitions
         public void Serialize_LocaleDefinition()
         {
             // Arrange
-            TestLocalDefinition localDefinition = new TestLocalDefinition("en-US");
+            TestLocalDefinition localDefinition = new TestLocalDefinition("en-US")
+            {
+                Ordinal = () => "/d{1,3}"
+            };
 
             // Act
             var result = JsonConvert.SerializeObject(localDefinition);

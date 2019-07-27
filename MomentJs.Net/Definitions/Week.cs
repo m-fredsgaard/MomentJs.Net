@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MomentJs.Net.Converters;
+using Newtonsoft.Json;
 
 namespace MomentJs.Net.Definitions
 {
@@ -8,7 +9,8 @@ namespace MomentJs.Net.Definitions
         ///     Is representing the first day of the week, 0 is Sunday, 1 is Monday, ..., 6 is Saturday
         /// </summary>
         [JsonProperty("dow", Order = 1)]
-        public int FirstDayOfWeek { get; set; }
+        [JsonConverter(typeof(LocaleResolverJsonConverter))]
+        public LocaleDefinition.ValueResolver<int> FirstDayOfWeek { get; set; }
 
         /// <summary>
         ///     Is used together with <see cref="FirstDayOfWeek" /> to determine the first week of the year. FirstWeekOfYear is
@@ -16,6 +18,7 @@ namespace MomentJs.Net.Definitions
         ///     the first week of the year.
         /// </summary>
         [JsonProperty("doy", Order = 2)]
-        public int FirstWeekOfYear { get; set; }
+        [JsonConverter(typeof(LocaleResolverJsonConverter))]
+        public LocaleDefinition.ValueResolver<int> FirstWeekOfYear { get; set; }
     }
 }

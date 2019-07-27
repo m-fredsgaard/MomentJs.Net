@@ -22,9 +22,9 @@ namespace MomentJs.Net.Converters
                 JObject o = (JObject) t;
                 string pattern = o.Property("Pattern").Value?.ToString();
                 if (string.IsNullOrWhiteSpace(pattern))
-                    pattern = "/(?:)/";
+                    pattern = "(?:)";
 
-                writer.WriteRawValue(pattern);
+                writer.WriteRawValue("/" + pattern + "/");
             }
         }
 
