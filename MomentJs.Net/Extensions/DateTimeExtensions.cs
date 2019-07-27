@@ -7,20 +7,34 @@ namespace MomentJs.Net.Extensions
 {
     public static class DateTimeExtensions
     {
+        public static string Format(this DateTime dateTime, DateFormat dateFormat, LocaleDefinition locale)
+        {
+            string format = GetFormat(dateFormat, locale);
+
+            return MomentFormatter.Format(dateTime, format, locale);
+        }
+
         public static string Format<T>(this DateTime dateTime, string format, T locale = null)
             where T : LocaleDefinition<T>
         {
             return MomentFormatter.Format(dateTime, format, locale ?? LocaleDefinition<T>.Current);
         }
 
-        public static string Format<T>(this DateTime dateTime, DateFormat dateformat, T locale = null)
+        public static string Format<T>(this DateTime dateTime, DateFormat dateFormat, T locale = null)
             where T : LocaleDefinition<T>
         {
             if (locale == null)
                 locale = LocaleDefinition<T>.Current;
 
+            string format = GetFormat(dateFormat, locale);
+
+            return Format(dateTime, format, locale);
+        }
+
+        private static string GetFormat(DateFormat dateFormat, LocaleDefinition locale)
+        {
             string format;
-            switch (dateformat)
+            switch (dateFormat)
             {
                 case DateFormat.LT:
                     format = locale.LongDateFormat.LT();
@@ -53,9 +67,10 @@ namespace MomentJs.Net.Extensions
                     format = locale.LongDateFormat.llll();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(dateformat), dateformat, null);
+                    throw new ArgumentOutOfRangeException(nameof(dateFormat), dateFormat, null);
             }
-            return Format(dateTime, format, locale);
+
+            return format;
         }
     }
 }

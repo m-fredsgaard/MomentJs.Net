@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace MomentJs.Net.Definitions
 {
-    public class LocaleDefinition<T> : LocaleDefinition
+    public abstract class LocaleDefinition<T> : LocaleDefinition
         where T : LocaleDefinition
     {
         private static T _current;
@@ -47,11 +47,16 @@ namespace MomentJs.Net.Definitions
         }
     }
 
-    public abstract class LocaleDefinition
+    public class LocaleDefinition
     {
         public delegate T ValueResolver<out T>();
 
-        protected LocaleDefinition(CultureInfo culture)
+        public LocaleDefinition(string cultureName)
+            : this(new CultureInfo(cultureName))
+        {
+        }
+
+        public LocaleDefinition(CultureInfo culture)
         {
             Culture = culture;
 
@@ -100,11 +105,6 @@ namespace MomentJs.Net.Definitions
                 // FirstWeekOfYear is calculated as 7 + <see cref="FirstDayOfWeek"/> - janX, where janX is the first day of January that must belong to the first week of the year.
                 FirstWeekOfYear = () => 7 + (int) culture.DateTimeFormat.FirstDayOfWeek - 1
             };
-        }
-
-        protected LocaleDefinition(string cultureName)
-            : this(new CultureInfo(cultureName))
-        {
         }
 
         [JsonIgnore] public CultureInfo Culture { get; }

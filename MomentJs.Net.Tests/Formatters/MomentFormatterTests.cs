@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace MomentJs.Net.Tests.Formatters
 {
     [TestFixture]
-    public class MomentFormatterTests
+    public class DateFormatterTests
     {
         private static readonly DateTime DateTime = new DateTime(1986, 9, 4, 20, 30, 25, 123);
 
@@ -123,26 +123,6 @@ namespace MomentJs.Net.Tests.Formatters
         [TestCase(FormatToken.X, "da-DK", ExpectedResult = "526242625")]
         [TestCase(FormatToken.x, "en-US", ExpectedResult = "526242625123")]
         [TestCase(FormatToken.x, "da-DK", ExpectedResult = "526242625123")]
-        //[TestCase(MomentFormat.LT, "en-US", ExpectedResult = "8:30 PM")]
-        //[TestCase(MomentFormat.LT, "da-DK", ExpectedResult = "20:30")]
-        //[TestCase(MomentFormat.LTS, "en-US", ExpectedResult = "8:30:25 PM")]
-        //[TestCase(MomentFormat.LTS, "da-DK", ExpectedResult = "20:30:25")]
-        //[TestCase(MomentFormat.L, "en-US", ExpectedResult = "09/04/1986")]
-        //[TestCase(MomentFormat.L, "da-DK", ExpectedResult = "04-09-1986")]
-        //[TestCase(MomentFormat.l, "en-US", ExpectedResult = "9/4/1986")]
-        //[TestCase(MomentFormat.l, "da-DK", ExpectedResult = "4-9-1986")]
-        //[TestCase(MomentFormat.LL, "en-US", ExpectedResult = "Thursday, September 4, 1986")]
-        //[TestCase(MomentFormat.LL, "da-DK", ExpectedResult = "4. september 1986")]
-        //[TestCase(MomentFormat.ll, "en-US", ExpectedResult = "Thu, Sep 4, 1986")]
-        //[TestCase(MomentFormat.ll, "da-DK", ExpectedResult = "4. sep 1986")]
-        //[TestCase(MomentFormat.LLL, "en-US", ExpectedResult = "Thursday, September 4, 1986 8:30 PM")]
-        //[TestCase(MomentFormat.LLL, "da-DK", ExpectedResult = "4. september 1986 20:30")]
-        //[TestCase(MomentFormat.lll, "en-US", ExpectedResult = "Thu, Sep 4, 1986 8:30 PM")]
-        //[TestCase(MomentFormat.lll, "da-DK", ExpectedResult = "4. sep 1986 20:30")]
-        //[TestCase(MomentFormat.LLLL, "en-US", ExpectedResult = "Thursday, September 4, 1986 8:30:25 PM")]
-        //[TestCase(MomentFormat.LLLL, "da-DK", ExpectedResult = "4. september 1986 20:30:25")]
-        //[TestCase(MomentFormat.llll, "en-US", ExpectedResult = "Thu, Sep 4, 1986 8:30:25 PM")]
-        //[TestCase(MomentFormat.llll, "da-DK", ExpectedResult = "4. sep 1986 20:30:25")]
         public string StandardFormat_With_StandardLocaleDefinition(FormatToken formatToken, string culture)
         {
             // Arrange
@@ -155,12 +135,11 @@ namespace MomentJs.Net.Tests.Formatters
             return result;
         }
 
-
         [TestCase("dddd, MMMM D, YYYY h:mm A", "en-US", ExpectedResult = "Thursday, September 4, 1986 8:30 PM")]
         [TestCase("dddd, Do MMMM, YYYY HH:mm", "da-DK", ExpectedResult = "torsdag, 4. september, 1986 20:30")]
         [TestCase("dddd, Do MMMM, YYYY 'YYYY' HH:mm", "da-DK", ExpectedResult =
             "torsdag, 4. september, 1986 YYYY 20:30")]
-        public string CustomFormat_With_StandardLocaleDefinition(string format, string culture)
+        public string CustomFormat_With_LocaleDefinition(string format, string culture)
         {
             // Arrange
             LocaleDefinition localeDefinition = GetLocaleDefinition(culture);
@@ -174,11 +153,11 @@ namespace MomentJs.Net.Tests.Formatters
 
         private static LocaleDefinition GetLocaleDefinition(string culture)
         {
-            StandardLocaleDefinition standardLocaleDefinition = new StandardLocaleDefinition(culture);
+            LocaleDefinition localeDefinition = new LocaleDefinition(culture);
             switch (culture)
             {
                 case "en-US":
-                    standardLocaleDefinition.Ordinal = () => @"function (number) { var b = number % 10,
+                    localeDefinition.Ordinal = () => @"function (number) { var b = number % 10,
             output = (~~(number % 100 / 10) === 1) ? 'th' :
             (b === 1) ? 'st' :
             (b === 2) ? 'nd' :
@@ -187,11 +166,11 @@ namespace MomentJs.Net.Tests.Formatters
         return number + output; }";
                     break;
                 case "da-DK":
-                    standardLocaleDefinition.Ordinal = () => @"function (number){return number+'.';}";
+                    localeDefinition.Ordinal = () => @"function (number){return number+'.';}";
                     break;
             }
 
-            return standardLocaleDefinition;
+            return localeDefinition;
         }
     }
 }

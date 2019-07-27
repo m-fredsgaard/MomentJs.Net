@@ -103,7 +103,7 @@ namespace MomentJs.Net.Tests.Definitions
             };
 
             // Act
-            var result = JsonConvert.SerializeObject(localDefinition);
+            string result = JsonConvert.SerializeObject(localDefinition);
 
             // Assert
             Assert.That(result, Is.Not.Null);
