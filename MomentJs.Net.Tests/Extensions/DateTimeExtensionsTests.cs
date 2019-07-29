@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using MomentJs.Net.Definitions;
 using MomentJs.Net.Extensions;
 using MomentJs.Net.Formats;
@@ -30,36 +31,42 @@ namespace MomentJs.Net.Tests.Extensions
         [TestCase(DateFormat.LLLL, "da-DK", ExpectedResult = "4. september 1986 20:30:25")]
         [TestCase(DateFormat.llll, "en-US", ExpectedResult = "Thu, Sep 4, 1986 8:30:25 PM")]
         [TestCase(DateFormat.llll, "da-DK", ExpectedResult = "4. sep 1986 20:30:25")]
-        public string DateFormat_With_LocaleDefinition(DateFormat formatToken, string culture)
+        public string DateFormat_With_LocaleDefinition(DateFormat formatToken, string cultureName)
         {
             // Arrange
-            LocaleDefinition localeDefinition = GetLocaleDefinition(culture);
+            LocaleDefinition localeDefinition = GetLocaleDefinition();
+            CultureInfo culture = new CultureInfo(cultureName);
 
             // Act
-            string result = DateTime.Format(formatToken, localeDefinition);
+            string result = DateTime.Format(formatToken, culture, localeDefinition);
 
             // Assert
             return result;
         }
 
-        private static LocaleDefinition GetLocaleDefinition(string culture)
+        private static LocaleDefinition GetLocaleDefinition()
         {
-            LocaleDefinition localeDefinition = new LocaleDefinition(culture);
-            switch (culture)
+            LocaleDefinition localeDefinition = new LocaleDefinition
             {
-                case "en-US":
-                    localeDefinition.Ordinal = () => @"function (number) { var b = number % 10,
-            output = (~~(number % 100 / 10) === 1) ? 'th' :
-            (b === 1) ? 'st' :
-            (b === 2) ? 'nd' :
-            (b === 3) ? 'rd' : 'th';
-            console.log(output);
-        return number + output; }";
-                    break;
-                case "da-DK":
-                    localeDefinition.Ordinal = () => @"function (number){return number+'.';}";
-                    break;
-            }
+                Ordinal = culture =>
+                {
+                    switch (culture.Name)
+                    {
+                        case "en-US":
+                            return @"function (number) { var b = number % 10,
+                output = (~~(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+                console.log(output);
+            return number + output; }";
+                        case "da-DK":
+                            return @"function (number){return number+'.';}";
+                        default:
+                            return @"function (number){return number;}";
+                    }
+                }
+            };
 
             return localeDefinition;
         }

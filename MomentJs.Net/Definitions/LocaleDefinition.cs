@@ -1,113 +1,33 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using MomentJs.Net.Converters;
 using MomentJs.Net.Extensions;
-using MomentJs.Net.Formats;
 using Newtonsoft.Json;
 
 namespace MomentJs.Net.Definitions
 {
-    public abstract class LocaleDefinition<T> : LocaleDefinition
-        where T : LocaleDefinition
-    {
-        private static T _current;
-
-        protected LocaleDefinition(CultureInfo culture) : base(culture)
-        {
-        }
-
-        // ReSharper disable once MemberCanBeProtected.Global
-        public LocaleDefinition(string culture) : base(culture)
-        {
-        }
-
-        public static T Current
-        {
-            get
-            {
-                if (_current != null && _current.Culture.Name == CultureInfo.CurrentCulture.Name)
-                    return _current;
-
-                ConstructorInfo constructor = typeof(T).GetConstructor(new[] {typeof(CultureInfo)});
-                if (constructor != null)
-                {
-                    _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture}) as T;
-                }
-                else
-                {
-                    constructor = typeof(T).GetConstructor(new[] {typeof(string)});
-                    if (constructor != null)
-                        _current = constructor.Invoke(new object[] {CultureInfo.CurrentCulture.Name}) as T;
-                }
-
-                return _current;
-            }
-        }
-    }
-
     public class LocaleDefinition
     {
-        public delegate T ValueResolver<out T>();
+        public delegate T ValueResolver<out T>(CultureInfo culture);
 
-        public LocaleDefinition(string cultureName)
-            : this(new CultureInfo(cultureName))
+        public LocaleDefinition()
         {
-        }
-
-        public LocaleDefinition(CultureInfo culture)
-        {
-            Culture = culture;
-
-            Months = () => culture.DateTimeFormat.MonthNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
-            MonthsShort = () => culture.DateTimeFormat.AbbreviatedMonthNames.Select(x => x.NullIfEmpty()).SkipNulls()
-                .ToArray();
-            MonthsParseExact = () => true;
-            Weekdays = () => culture.DateTimeFormat.DayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
-            WeekdaysShort = () => culture.DateTimeFormat.AbbreviatedDayNames.Select(x => x.NullIfEmpty()).SkipNulls()
-                .ToArray();
-            WeekdaysMin = () =>
-                culture.DateTimeFormat.ShortestDayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
-            WeekdaysParseExact = () => true;
-            LongDateFormat = new LongDateFormat
-            {
-                LT = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.ShortTimePattern, this,
-                    DateFormat.LT),
-                LTS = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.LongTimePattern, this,
-                    DateFormat.LTS),
-                L = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.ShortDatePattern, this,
-                    DateFormat.L),
-                LL = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.LongDatePattern, this,
-                    DateFormat.LL),
-                LLL = () => PatternConverter.ConvertToMomentPattern(
-                    culture.DateTimeFormat.LongDatePattern + " " + culture.DateTimeFormat.ShortTimePattern, this,
-                    DateFormat.LLL),
-                LLLL = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.FullDateTimePattern, this,
-                    DateFormat.LLLL),
-                l = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.ShortDatePattern, this,
-                    DateFormat.l),
-                ll = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.LongDatePattern, this,
-                    DateFormat.ll),
-                lll = () => PatternConverter.ConvertToMomentPattern(
-                    culture.DateTimeFormat.LongDatePattern + " " + culture.DateTimeFormat.ShortTimePattern, this,
-                    DateFormat.lll),
-                llll = () => PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.FullDateTimePattern, this,
-                    DateFormat.llll)
-            };
+            Months = culture => GetDefaultValue<string[]>(nameof(Months), culture);
+            MonthsShort = culture => GetDefaultValue<string[]>(nameof(MonthsShort), culture);
+            MonthsParseExact = culture => GetDefaultValue<bool>(nameof(MonthsParseExact), culture);
+            Weekdays = culture => GetDefaultValue<string[]>(nameof(Weekdays), culture);
+            WeekdaysShort = culture => GetDefaultValue<string[]>(nameof(WeekdaysShort), culture);
+            WeekdaysMin = culture => GetDefaultValue<string[]>(nameof(WeekdaysMin), culture);
+            WeekdaysParseExact = culture => GetDefaultValue<bool>(nameof(MonthsParseExact), culture);
+            LongDateFormat = new LongDateFormat();
             Calendar = new Calendar();
             RelativeTime = new RelativeTime();
-            DayOfMonthOrdinalParse = () => new Regex("\\d{1,2}");
-            Ordinal = () => "function (number) { return number; }";
-            Week = new Week
-            {
-                FirstDayOfWeek = () => (int) culture.DateTimeFormat.FirstDayOfWeek,
-                // FirstWeekOfYear is calculated as 7 + <see cref="FirstDayOfWeek"/> - janX, where janX is the first day of January that must belong to the first week of the year.
-                FirstWeekOfYear = () => 7 + (int) culture.DateTimeFormat.FirstDayOfWeek - 1
-            };
+            DayOfMonthOrdinalParse = culture => GetDefaultValue<Regex>(nameof(DayOfMonthOrdinalParse), culture);
+            Ordinal = culture => GetDefaultValue<string>(nameof(Ordinal), culture);
+            Week = new Week();
         }
-
-        [JsonIgnore] public CultureInfo Culture { get; }
 
         [JsonProperty("months", Order = 1)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
@@ -154,5 +74,47 @@ namespace MomentJs.Net.Definitions
         public ValueResolver<Ordinal> Ordinal { get; set; }
 
         [JsonProperty("week", Order = 13)] public Week Week { get; set; }
+
+        protected static T GetDefaultValue<T>(string type, CultureInfo culture)
+        {
+            object value;
+            switch (type)
+            {
+                case nameof(Months):
+                    value = culture.DateTimeFormat.MonthNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
+                    break;
+                case nameof(MonthsShort):
+                    value = culture.DateTimeFormat.AbbreviatedMonthNames.Select(x => x.NullIfEmpty()).SkipNulls()
+                        .ToArray();
+                    break;
+                case nameof(MonthsParseExact):
+                    value = true;
+                    break;
+                case nameof(Weekdays):
+                    value = culture.DateTimeFormat.DayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
+                    break;
+                case nameof(WeekdaysShort):
+                    value = culture.DateTimeFormat.AbbreviatedDayNames.Select(x => x.NullIfEmpty()).SkipNulls()
+                        .ToArray();
+                    break;
+                case nameof(WeekdaysMin):
+                    value = culture.DateTimeFormat.ShortestDayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
+                    break;
+                case nameof(WeekdaysParseExact):
+                    value = true;
+                    break;
+                case nameof(DayOfMonthOrdinalParse):
+                    value = new Regex("\\d{1,2}");
+                    break;
+                case nameof(Ordinal):
+                    value = "function (number) { return number; }";
+                    break;
+                default:
+                    value = default;
+                    break;
+            }
+
+            return (T) Convert.ChangeType(value, typeof(T));
+        }
     }
 }

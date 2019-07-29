@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
-using MomentJs.Net.Definitions;
 using MomentJs.Net.Exceptions;
 using MomentJs.Net.Formats;
 
@@ -10,7 +10,7 @@ namespace MomentJs.Net.Converters
 {
     public class PatternConverter
     {
-        public static string ConvertToMomentPattern(string standardPattern, LocaleDefinition locale,
+        public static string ConvertToMomentPattern(string standardPattern, CultureInfo culture,
             DateFormat format, bool tolerant = true)
         {
             StringBuilder result = new StringBuilder();
@@ -416,11 +416,11 @@ namespace MomentJs.Net.Converters
                             break;
                         case ':':
                             state = changeState(state, State.None);
-                            result.Append(locale.Culture.DateTimeFormat.TimeSeparator);
+                            result.Append(culture.DateTimeFormat.TimeSeparator);
                             break;
                         case '/':
                             state = changeState(state, State.None);
-                            result.Append(locale.Culture.DateTimeFormat.DateSeparator);
+                            result.Append(culture.DateTimeFormat.DateSeparator);
                             break;
                         case '\"':
                             state = changeState(state, State.InDoubleQuoteLiteral);

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using MomentJs.Net.Definitions;
 using MomentJs.Net.Formats;
 using MomentJs.Net.Formatters;
@@ -123,13 +124,14 @@ namespace MomentJs.Net.Tests.Formatters
         [TestCase(FormatToken.X, "da-DK", ExpectedResult = "526242625")]
         [TestCase(FormatToken.x, "en-US", ExpectedResult = "526242625123")]
         [TestCase(FormatToken.x, "da-DK", ExpectedResult = "526242625123")]
-        public string StandardFormat_With_StandardLocaleDefinition(FormatToken formatToken, string culture)
+        public string StandardFormat_With_StandardLocaleDefinition(FormatToken formatToken, string cultureName)
         {
             // Arrange
-            LocaleDefinition localeDefinition = GetLocaleDefinition(culture);
+            LocaleDefinition localeDefinition = GetLocaleDefinition();
+            CultureInfo culture = new CultureInfo(cultureName);
 
             // Act
-            string result = MomentFormatter.Format(DateTime, formatToken, localeDefinition);
+            string result = MomentFormatter.Format(DateTime, formatToken, localeDefinition, culture);
 
             // Assert
             return result;
@@ -139,36 +141,43 @@ namespace MomentJs.Net.Tests.Formatters
         [TestCase("dddd, Do MMMM, YYYY HH:mm", "da-DK", ExpectedResult = "torsdag, 4. september, 1986 20:30")]
         [TestCase("dddd, Do MMMM, YYYY 'YYYY' HH:mm", "da-DK", ExpectedResult =
             "torsdag, 4. september, 1986 YYYY 20:30")]
-        public string CustomFormat_With_LocaleDefinition(string format, string culture)
+        public string CustomFormat_With_LocaleDefinition(string format, string cultureName)
         {
             // Arrange
-            LocaleDefinition localeDefinition = GetLocaleDefinition(culture);
+            LocaleDefinition localeDefinition = GetLocaleDefinition();
+            CultureInfo culture = new CultureInfo(cultureName);
 
             // Act
-            string result = MomentFormatter.Format(DateTime, format, localeDefinition);
+            string result = MomentFormatter.Format(DateTime, format, localeDefinition, culture);
 
             // Assert
             return result;
         }
 
-        private static LocaleDefinition GetLocaleDefinition(string culture)
+        private static LocaleDefinition GetLocaleDefinition()
         {
-            LocaleDefinition localeDefinition = new LocaleDefinition(culture);
-            switch (culture)
+            LocaleDefinition localeDefinition = new LocaleDefinition
             {
-                case "en-US":
-                    localeDefinition.Ordinal = () => @"function (number) { var b = number % 10,
-            output = (~~(number % 100 / 10) === 1) ? 'th' :
-            (b === 1) ? 'st' :
-            (b === 2) ? 'nd' :
-            (b === 3) ? 'rd' : 'th';
-            console.log(output);
-        return number + output; }";
-                    break;
-                case "da-DK":
-                    localeDefinition.Ordinal = () => @"function (number){return number+'.';}";
-                    break;
-            }
+                Ordinal = culture =>
+                {
+                    switch (culture.Name)
+                    {
+                        case "en-US":
+                            return @"function (number) { var b = number % 10,
+                output = (~~(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+                console.log(output);
+            return number + output; }";
+                        case "da-DK":
+                            return @"function (number){return number+'.';}";
+                        default:
+                            return @"function (number){return number;}";
+                    }
+                }
+            };
+
 
             return localeDefinition;
         }

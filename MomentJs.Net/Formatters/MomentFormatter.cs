@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using MomentJs.Net.Definitions;
 using MomentJs.Net.Exceptions;
@@ -10,12 +11,13 @@ namespace MomentJs.Net.Formatters
 {
     public static class MomentFormatter
     {
-        internal static string Format(DateTime dateTime, FormatToken formatToken, LocaleDefinition locale)
+        internal static string Format(DateTime dateTime, FormatToken formatToken, LocaleDefinition locale,
+            CultureInfo culture)
         {
-            return Format(dateTime, formatToken.ToString(), locale);
+            return Format(dateTime, formatToken.ToString(), locale, culture);
         }
 
-        public static string Format(DateTime dateTime, string format, LocaleDefinition locale)
+        public static string Format(DateTime dateTime, string format, LocaleDefinition locale, CultureInfo culture)
         {
             if (format == null)
                 return null;
@@ -33,28 +35,28 @@ namespace MomentJs.Net.Formatters
                         resultBuilder.Append(dateTime.Month);
                         break;
                     case State.Mo:
-                        resultBuilder.Append(locale.Ordinal().Format(dateTime.Month));
+                        resultBuilder.Append(locale.Ordinal(culture).Format(dateTime.Month));
                         break;
                     case State.MM:
                         resultBuilder.Append(dateTime.Month.ToString().PadLeft(2, '0'));
                         break;
                     case State.MMM:
-                        resultBuilder.Append(locale.MonthsShort()[dateTime.Month - 1]);
+                        resultBuilder.Append(locale.MonthsShort(culture)[dateTime.Month - 1]);
                         break;
                     case State.MMMM:
-                        resultBuilder.Append(locale.Months()[dateTime.Month - 1]);
+                        resultBuilder.Append(locale.Months(culture)[dateTime.Month - 1]);
                         break;
                     case State.Q:
                         resultBuilder.Append((int) Math.Ceiling(dateTime.Month / 3.0));
                         break;
                     case State.Qo:
-                        resultBuilder.Append(locale.Ordinal().Format((int) Math.Ceiling(dateTime.Month / 3.0)));
+                        resultBuilder.Append(locale.Ordinal(culture).Format((int) Math.Ceiling(dateTime.Month / 3.0)));
                         break;
                     case State.D:
                         resultBuilder.Append(dateTime.Day);
                         break;
                     case State.Do:
-                        resultBuilder.Append(locale.Ordinal().Format(dateTime.Day));
+                        resultBuilder.Append(locale.Ordinal(culture).Format(dateTime.Day));
                         break;
                     case State.DD:
                         resultBuilder.Append(dateTime.Day.ToString().PadLeft(2, '0'));
@@ -63,7 +65,7 @@ namespace MomentJs.Net.Formatters
                         resultBuilder.Append(dateTime.DayOfYear);
                         break;
                     case State.DDDo:
-                        resultBuilder.Append(locale.Ordinal().Format(dateTime.DayOfYear));
+                        resultBuilder.Append(locale.Ordinal(culture).Format(dateTime.DayOfYear));
                         break;
                     case State.DDDD:
                         resultBuilder.Append(dateTime.DayOfYear.ToString().PadLeft(3, '0'));
@@ -72,43 +74,43 @@ namespace MomentJs.Net.Formatters
                         resultBuilder.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.@do:
-                        resultBuilder.Append(locale.Ordinal().Format((int) dateTime.DayOfWeek));
+                        resultBuilder.Append(locale.Ordinal(culture).Format((int) dateTime.DayOfWeek));
                         break;
                     case State.dd:
-                        resultBuilder.Append(locale.WeekdaysMin()[(int) dateTime.DayOfWeek]);
+                        resultBuilder.Append(locale.WeekdaysMin(culture)[(int) dateTime.DayOfWeek]);
                         break;
                     case State.ddd:
-                        resultBuilder.Append(locale.WeekdaysShort()[(int) dateTime.DayOfWeek]);
+                        resultBuilder.Append(locale.WeekdaysShort(culture)[(int) dateTime.DayOfWeek]);
                         break;
                     case State.dddd:
-                        resultBuilder.Append(locale.Weekdays()[(int) dateTime.DayOfWeek]);
+                        resultBuilder.Append(locale.Weekdays(culture)[(int) dateTime.DayOfWeek]);
                         break;
                     case State.e:
                         resultBuilder.Append((int) dateTime.DayOfWeek);
                         break;
                     case State.E:
-                        int dayOfWeek = (int) dateTime.DayOfWeek - (int) locale.Culture.DateTimeFormat.FirstDayOfWeek;
+                        int dayOfWeek = (int) dateTime.DayOfWeek - (int) culture.DateTimeFormat.FirstDayOfWeek;
                         if (dayOfWeek < 0)
                             dayOfWeek = 7 + dayOfWeek;
                         resultBuilder.Append(dayOfWeek);
                         break;
                     case State.w:
                     case State.W:
-                        resultBuilder.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
-                            locale.Culture.DateTimeFormat.CalendarWeekRule,
-                            locale.Culture.DateTimeFormat.FirstDayOfWeek));
+                        resultBuilder.Append(culture.Calendar.GetWeekOfYear(dateTime,
+                            culture.DateTimeFormat.CalendarWeekRule,
+                            culture.DateTimeFormat.FirstDayOfWeek));
                         break;
                     case State.wo:
                     case State.Wo:
-                        resultBuilder.Append(locale.Ordinal().Format(locale.Culture.Calendar.GetWeekOfYear(dateTime,
-                            locale.Culture.DateTimeFormat.CalendarWeekRule,
-                            locale.Culture.DateTimeFormat.FirstDayOfWeek)));
+                        resultBuilder.Append(locale.Ordinal(culture).Format(culture.Calendar.GetWeekOfYear(dateTime,
+                            culture.DateTimeFormat.CalendarWeekRule,
+                            culture.DateTimeFormat.FirstDayOfWeek)));
                         break;
                     case State.ww:
                     case State.WW:
-                        resultBuilder.Append(locale.Culture.Calendar.GetWeekOfYear(dateTime,
-                            locale.Culture.DateTimeFormat.CalendarWeekRule,
-                            locale.Culture.DateTimeFormat.FirstDayOfWeek).ToString().PadLeft(2, '0'));
+                        resultBuilder.Append(culture.Calendar.GetWeekOfYear(dateTime,
+                            culture.DateTimeFormat.CalendarWeekRule,
+                            culture.DateTimeFormat.FirstDayOfWeek).ToString().PadLeft(2, '0'));
                         break;
                     case State.Y:
                         resultBuilder.Append(dateTime.Year.ToString());
@@ -143,14 +145,14 @@ namespace MomentJs.Net.Formatters
                     case State.A:
                         resultBuilder.Append(dateTime.TimeOfDay >= TimeSpan.Zero &&
                                              dateTime.TimeOfDay < TimeSpan.FromHours(12)
-                            ? locale.Culture.DateTimeFormat.AMDesignator.ToUpper()
-                            : locale.Culture.DateTimeFormat.PMDesignator.ToUpper());
+                            ? culture.DateTimeFormat.AMDesignator.ToUpper()
+                            : culture.DateTimeFormat.PMDesignator.ToUpper());
                         break;
                     case State.a:
                         resultBuilder.Append(dateTime.TimeOfDay >= TimeSpan.Zero &&
                                              dateTime.TimeOfDay < TimeSpan.FromHours(12)
-                            ? locale.Culture.DateTimeFormat.AMDesignator.ToLower()
-                            : locale.Culture.DateTimeFormat.PMDesignator.ToLower());
+                            ? culture.DateTimeFormat.AMDesignator.ToLower()
+                            : culture.DateTimeFormat.PMDesignator.ToLower());
                         break;
                     case State.H:
                         resultBuilder.Append(dateTime.Hour);
@@ -219,47 +221,50 @@ namespace MomentJs.Net.Formatters
                         resultBuilder.Append(x.ToUnixTimeMilliseconds());
                         break;
                     case State.LT:
-                        if (locale.LongDateFormat.LT() != "LT")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LT(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "LT")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LT(culture), locale, culture));
                         break;
                     case State.LTS:
-                        if (locale.LongDateFormat.LT() != "LTS")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LTS(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "LTS")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LTS(culture), locale, culture));
                         break;
                     case State.L:
-                        if (locale.LongDateFormat.LT() != "L")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.L(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "L")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.L(culture), locale, culture));
                         break;
                     case State.LL:
-                        if (locale.LongDateFormat.LT() != "LL")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LL(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "LL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LL(culture), locale, culture));
                         break;
                     case State.LLL:
-                        if (locale.LongDateFormat.LT() != "LLL")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLL(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "LLL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLL(culture), locale, culture));
                         break;
                     case State.LLLL:
-                        if (locale.LongDateFormat.LT() != "LLLL")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLLL(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "LLLL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLLL(culture), locale,
+                                culture));
                         break;
                     case State.l:
-                        if (locale.LongDateFormat.LT() != "l")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.l(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "l")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.l(culture), locale, culture));
                         break;
                     case State.ll:
-                        if (locale.LongDateFormat.LT() != "ll")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ll(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "ll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ll(culture), locale, culture));
                         break;
                     case State.lll:
-                        if (locale.LongDateFormat.LT() != "lll")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.lll(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "lll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.lll(culture), locale, culture));
                         break;
                     case State.llll:
-                        if (locale.LongDateFormat.LT() != "llll")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.llll(), locale));
+                        if (locale.LongDateFormat.LT(culture) != "llll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.llll(culture), locale,
+                                culture));
                         break;
                     case State.InSingleQuoteLiteral:
                     case State.InDoubleQuoteLiteral:
+                    case State.InBrackets:
                     case State.EscapeSequence:
                         foreach (char character in tokenBuffer.ToString()) resultBuilder.Append(character);
                         break;
@@ -286,6 +291,12 @@ namespace MomentJs.Net.Formatters
                         state = changeState(state, State.None);
                         break;
                     case State.InSingleQuoteLiteral:
+                        tokenBuffer.Append(character);
+                        break;
+                    case State.InBrackets when character == ']':
+                        state = changeState(state, State.None);
+                        break;
+                    case State.InBrackets:
                         tokenBuffer.Append(character);
                         break;
                     default:
@@ -728,11 +739,14 @@ namespace MomentJs.Net.Formatters
                                 break;
                             case ':':
                                 state = changeState(state, State.None);
-                                resultBuilder.Append(locale.Culture.DateTimeFormat.TimeSeparator);
+                                resultBuilder.Append(culture.DateTimeFormat.TimeSeparator);
                                 break;
                             case '/':
                                 state = changeState(state, State.None);
-                                resultBuilder.Append(locale.Culture.DateTimeFormat.DateSeparator);
+                                resultBuilder.Append(culture.DateTimeFormat.DateSeparator);
+                                break;
+                            case '[':
+                                state = changeState(state, State.InBrackets);
                                 break;
                             case '\"':
                                 state = changeState(state, State.InDoubleQuoteLiteral);
@@ -770,6 +784,7 @@ namespace MomentJs.Net.Formatters
             Invalid,
             InSingleQuoteLiteral,
             InDoubleQuoteLiteral,
+            InBrackets,
             EscapeSequence,
             A,
             a,

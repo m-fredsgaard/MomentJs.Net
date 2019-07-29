@@ -5,6 +5,13 @@ namespace MomentJs.Net.Definitions
 {
     public class Week
     {
+        public Week()
+        {
+            FirstDayOfWeek = culture => (int) culture.DateTimeFormat.FirstDayOfWeek;
+            // FirstWeekOfYear is calculated as 7 + <see cref="FirstDayOfWeek"/> - janX, where janX is the first day of January that must belong to the first week of the year.
+            FirstWeekOfYear = culture => 7 + (int) culture.DateTimeFormat.FirstDayOfWeek - 1;
+        }
+
         /// <summary>
         ///     Is representing the first day of the week, 0 is Sunday, 1 is Monday, ..., 6 is Saturday
         /// </summary>

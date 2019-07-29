@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using MomentJs.Net.Definitions;
 using Newtonsoft.Json;
@@ -13,7 +14,7 @@ namespace MomentJs.Net.Converters
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            value = GetValue(value);
+            value = GetValue(value, serializer.Culture);
             JsonConverter jsonConverter = new T();
             jsonConverter.WriteJson(writer, value, serializer);
         }
@@ -21,19 +22,21 @@ namespace MomentJs.Net.Converters
 
     internal class LocaleResolverJsonConverter : JsonConverter
     {
-        protected object GetValue(object localeResolver)
+        protected object GetValue(object localeResolver, CultureInfo culture)
         {
             MethodInfo invokeMethod = localeResolver.GetType().GetMethod("Invoke");
-            object value = invokeMethod?.Invoke(localeResolver, new object[0]);
+            object value = invokeMethod?.Invoke(localeResolver, new object[] {culture});
 
             return value;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            value = GetValue(value);
+            value = GetValue(value, serializer.Culture);
             if (value != null)
                 JToken.FromObject(value).WriteTo(writer);
+            else
+                writer.WriteNull();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,

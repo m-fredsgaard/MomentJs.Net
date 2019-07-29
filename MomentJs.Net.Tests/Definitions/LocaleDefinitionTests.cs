@@ -11,14 +11,14 @@ namespace MomentJs.Net.Tests.Definitions
     [TestFixture]
     public class LocaleDefinitionTests
     {
-        private class TestLocalDefinition : LocaleDefinition<TestLocalDefinition>
+        private class TestLocalDefinition : LocaleDefinition
         {
-            public TestLocalDefinition(CultureInfo culture) : base(culture)
+            public TestLocalDefinition(CultureInfo culture)
             {
                 Initialize(culture.Name);
             }
 
-            public TestLocalDefinition(string cultureName) : base(cultureName)
+            public TestLocalDefinition(string cultureName)
             {
                 Initialize(cultureName);
             }
@@ -28,7 +28,7 @@ namespace MomentJs.Net.Tests.Definitions
                 switch (culture)
                 {
                     case "en-US":
-                        Ordinal = () => @"function (number) { 
+                        Ordinal = c => @"function (number) { 
 	var b = number % 10,
 	output = ((number % 100 / 10) === 1) ? 'th' :
 		(b === 1) ? 'st' :
@@ -38,7 +38,7 @@ namespace MomentJs.Net.Tests.Definitions
 }";
                         break;
                     case "da-DK":
-                        Ordinal = () => @"function test(value){return value+'.';}";
+                        Ordinal = c => @"function test(value){return value+'.';}";
                         break;
                 }
             }
@@ -64,46 +64,28 @@ namespace MomentJs.Net.Tests.Definitions
         [TestCase(23, "da-DK", ExpectedResult = "23.")]
         [TestCase(24, "da-DK", ExpectedResult = "24.")]
         [TestCase(25, "da-DK", ExpectedResult = "25.")]
-        public string Ordinal(int value, string culture)
+        public string Ordinal(int value, string cultureName)
         {
-            TestLocalDefinition localDefinition = new TestLocalDefinition(culture);
-            return localDefinition.Ordinal().Format(value);
-        }
-
-        [Test]
-        public void Current_ChangeCulture()
-        {
-            // Arrange
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            TestLocalDefinition enUsLocale = TestLocalDefinition.Current;
-
-            Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo("en-US"));
-
-            // Act
-            CultureInfo.CurrentCulture = new CultureInfo("da-DK");
-
-            Assert.That(CultureInfo.CurrentCulture.Name, Is.EqualTo("da-DK"));
-
-            TestLocalDefinition daDkLocale = TestLocalDefinition.Current;
-
-            // Assert
-            Assert.That(enUsLocale, Is.Not.Null);
-            Assert.That(daDkLocale, Is.Not.Null);
-            Assert.That(enUsLocale.Culture.Name, Is.EqualTo("en-US"));
-            Assert.That(daDkLocale.Culture.Name, Is.EqualTo("da-DK"));
+            CultureInfo culture = new CultureInfo(cultureName);
+            TestLocalDefinition localDefinition = new TestLocalDefinition(cultureName);
+            return localDefinition.Ordinal(culture).Format(value);
         }
 
         [Test]
         public void Serialize_LocaleDefinition()
         {
             // Arrange
-            TestLocalDefinition localDefinition = new TestLocalDefinition("en-US")
+            CultureInfo culture = new CultureInfo("en-US");
+            TestLocalDefinition localDefinition = new TestLocalDefinition(culture)
             {
-                Ordinal = () => "/d{1,3}"
+                Ordinal = c => "function (number) { return number }"
             };
 
             // Act
-            string result = JsonConvert.SerializeObject(localDefinition);
+            string result = JsonConvert.SerializeObject(localDefinition, new JsonSerializerSettings
+            {
+                Culture = culture
+            });
 
             // Assert
             Assert.That(result, Is.Not.Null);
