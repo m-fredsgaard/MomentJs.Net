@@ -23,11 +23,12 @@ namespace MomentJs.Net.Definitions
             try
             {
                 Engine engine = new Engine();
+#if DEBUG
                 engine.SetValue("console", new
                 {
                     log = new Action<object>(x => Debug.WriteLine(x))
                 });
-
+#endif
                 string javascript = JavascriptFunction.Trim();
                 string functionName;
                 if (javascript.StartsWith("function"))
