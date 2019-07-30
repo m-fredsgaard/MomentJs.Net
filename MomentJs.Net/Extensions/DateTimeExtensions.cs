@@ -25,34 +25,34 @@ namespace MomentJs.Net.Extensions
             switch (dateFormat)
             {
                 case DateFormat.LT:
-                    format = locale.LongDateFormat.LT(culture);
+                    format = locale.LongDateFormat.ShortTime(culture);
                     break;
                 case DateFormat.LTS:
-                    format = locale.LongDateFormat.LTS(culture);
+                    format = locale.LongDateFormat.LongTime(culture);
                     break;
                 case DateFormat.L:
-                    format = locale.LongDateFormat.L(culture);
+                    format = locale.LongDateFormat.ShortDate(culture);
                     break;
                 case DateFormat.l:
-                    format = locale.LongDateFormat.l(culture);
+                    format = locale.LongDateFormat.ShortDateCompact(culture);
                     break;
                 case DateFormat.LL:
-                    format = locale.LongDateFormat.LL(culture);
+                    format = locale.LongDateFormat.LongDate(culture);
                     break;
                 case DateFormat.ll:
-                    format = locale.LongDateFormat.ll(culture);
+                    format = locale.LongDateFormat.LongDateCompact(culture);
                     break;
                 case DateFormat.LLL:
-                    format = locale.LongDateFormat.LLL(culture);
+                    format = locale.LongDateFormat.LongDateShortTime(culture);
                     break;
                 case DateFormat.lll:
-                    format = locale.LongDateFormat.lll(culture);
+                    format = locale.LongDateFormat.LongDateShortTimeCompact(culture);
                     break;
                 case DateFormat.LLLL:
-                    format = locale.LongDateFormat.LLLL(culture);
+                    format = locale.LongDateFormat.FullDateTime(culture);
                     break;
                 case DateFormat.llll:
-                    format = locale.LongDateFormat.llll(culture);
+                    format = locale.LongDateFormat.FullDateTimeCompact(culture);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dateFormat), dateFormat, null);

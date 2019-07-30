@@ -221,45 +221,54 @@ namespace MomentJs.Net.Formatters
                         resultBuilder.Append(x.ToUnixTimeMilliseconds());
                         break;
                     case State.LT:
-                        if (locale.LongDateFormat.LT(culture) != "LT")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LT(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "LT")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ShortTime(culture), locale,
+                                culture));
                         break;
                     case State.LTS:
-                        if (locale.LongDateFormat.LT(culture) != "LTS")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LTS(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "LTS")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LongTime(culture), locale,
+                                culture));
                         break;
                     case State.L:
-                        if (locale.LongDateFormat.LT(culture) != "L")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.L(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "L")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ShortDate(culture), locale,
+                                culture));
                         break;
                     case State.LL:
-                        if (locale.LongDateFormat.LT(culture) != "LL")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LL(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "LL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LongDate(culture), locale,
+                                culture));
                         break;
                     case State.LLL:
-                        if (locale.LongDateFormat.LT(culture) != "LLL")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLL(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "LLL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LongDateShortTime(culture),
+                                locale, culture));
                         break;
                     case State.LLLL:
-                        if (locale.LongDateFormat.LT(culture) != "LLLL")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LLLL(culture), locale,
+                        if (locale.LongDateFormat.ShortTime(culture) != "LLLL")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.FullDateTime(culture), locale,
                                 culture));
                         break;
                     case State.l:
-                        if (locale.LongDateFormat.LT(culture) != "l")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.l(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "l")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ShortDateCompact(culture),
+                                locale, culture));
                         break;
                     case State.ll:
-                        if (locale.LongDateFormat.LT(culture) != "ll")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.ll(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "ll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.LongDateCompact(culture),
+                                locale, culture));
                         break;
                     case State.lll:
-                        if (locale.LongDateFormat.LT(culture) != "lll")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.lll(culture), locale, culture));
+                        if (locale.LongDateFormat.ShortTime(culture) != "lll")
+                            resultBuilder.Append(Format(dateTime,
+                                locale.LongDateFormat.LongDateShortTimeCompact(culture), locale, culture));
                         break;
                     case State.llll:
-                        if (locale.LongDateFormat.LT(culture) != "llll")
-                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.llll(culture), locale,
+                        if (locale.LongDateFormat.ShortTime(culture) != "llll")
+                            resultBuilder.Append(Format(dateTime, locale.LongDateFormat.FullDateTimeCompact(culture),
+                                locale,
                                 culture));
                         break;
                     case State.InSingleQuoteLiteral:

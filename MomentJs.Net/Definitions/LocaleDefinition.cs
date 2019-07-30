@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MomentJs.Net.Converters;
@@ -14,18 +13,18 @@ namespace MomentJs.Net.Definitions
 
         public LocaleDefinition()
         {
-            Months = culture => GetDefaultValue<string[]>(nameof(Months), culture);
-            MonthsShort = culture => GetDefaultValue<string[]>(nameof(MonthsShort), culture);
-            MonthsParseExact = culture => GetDefaultValue<bool>(nameof(MonthsParseExact), culture);
-            Weekdays = culture => GetDefaultValue<string[]>(nameof(Weekdays), culture);
-            WeekdaysShort = culture => GetDefaultValue<string[]>(nameof(WeekdaysShort), culture);
-            WeekdaysMin = culture => GetDefaultValue<string[]>(nameof(WeekdaysMin), culture);
-            WeekdaysParseExact = culture => GetDefaultValue<bool>(nameof(MonthsParseExact), culture);
+            Months = MonthsDefaultValue;
+            MonthsShort = MonthsShortDefaultValue;
+            MonthsParseExact = MonthsParseExactDefaultValue;
+            Weekdays = WeekdaysDefaultValue;
+            WeekdaysShort = WeekdaysShortDefaultValue;
+            WeekdaysMin = WeekdaysMinDefaultValue;
+            WeekdaysParseExact = WeekdaysParseExactDefaultValue;
             LongDateFormat = new LongDateFormat();
             Calendar = new Calendar();
             RelativeTime = new RelativeTime();
-            DayOfMonthOrdinalParse = culture => GetDefaultValue<Regex>(nameof(DayOfMonthOrdinalParse), culture);
-            Ordinal = culture => GetDefaultValue<string>(nameof(Ordinal), culture);
+            DayOfMonthOrdinalParse = DayOfMonthOrdinalParseDefaultValue;
+            Ordinal = OrdinalDefaultValue;
             Week = new Week();
         }
 
@@ -33,29 +32,48 @@ namespace MomentJs.Net.Definitions
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<string[]> Months { get; set; }
 
+        public static ValueResolver<string[]> MonthsDefaultValue => culture =>
+            culture.DateTimeFormat.MonthNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
+
         [JsonProperty("monthsShort", Order = 2)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<string[]> MonthsShort { get; set; }
+
+        public static ValueResolver<string[]> MonthsShortDefaultValue => culture =>
+            culture.DateTimeFormat.AbbreviatedMonthNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
 
         [JsonProperty("monthsParseExact", Order = 3)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<bool> MonthsParseExact { get; set; }
 
+        public static ValueResolver<bool> MonthsParseExactDefaultValue => culture => true;
+
         [JsonProperty("weekdays", Order = 4)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<string[]> Weekdays { get; set; }
+
+        public static ValueResolver<string[]> WeekdaysDefaultValue => culture =>
+            culture.DateTimeFormat.DayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
 
         [JsonProperty("weekdaysShort", Order = 5)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<string[]> WeekdaysShort { get; set; }
 
+        public static ValueResolver<string[]> WeekdaysShortDefaultValue => culture =>
+            culture.DateTimeFormat.AbbreviatedDayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
+
         [JsonProperty("weekdaysMin", Order = 6)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<string[]> WeekdaysMin { get; set; }
 
+        public static ValueResolver<string[]> WeekdaysMinDefaultValue => culture =>
+            culture.DateTimeFormat.ShortestDayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
+
         [JsonProperty("weekdaysParseExact", Order = 7)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public ValueResolver<bool> WeekdaysParseExact { get; set; }
+
+        public static ValueResolver<bool> WeekdaysParseExactDefaultValue => culture => true;
 
         [JsonProperty("longDateFormat", Order = 8)]
         public LongDateFormat LongDateFormat { get; set; }
@@ -69,52 +87,14 @@ namespace MomentJs.Net.Definitions
         [JsonConverter(typeof(LocaleResolverJsonConverter<DayOfMonthOrdinalParseJsonConverter>))]
         public ValueResolver<Regex> DayOfMonthOrdinalParse { get; set; }
 
+        public static ValueResolver<Regex> DayOfMonthOrdinalParseDefaultValue => culture => new Regex("\\d{1,2}");
+
         [JsonProperty("ordinal", Order = 12)]
         [JsonConverter(typeof(LocaleResolverJsonConverter<OrdinalJsonConverter>))]
         public ValueResolver<Ordinal> Ordinal { get; set; }
 
+        public static ValueResolver<Ordinal> OrdinalDefaultValue => culture => "function (number) { return number; }";
+
         [JsonProperty("week", Order = 13)] public Week Week { get; set; }
-
-        protected static T GetDefaultValue<T>(string type, CultureInfo culture)
-        {
-            object value;
-            switch (type)
-            {
-                case nameof(Months):
-                    value = culture.DateTimeFormat.MonthNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
-                    break;
-                case nameof(MonthsShort):
-                    value = culture.DateTimeFormat.AbbreviatedMonthNames.Select(x => x.NullIfEmpty()).SkipNulls()
-                        .ToArray();
-                    break;
-                case nameof(MonthsParseExact):
-                    value = true;
-                    break;
-                case nameof(Weekdays):
-                    value = culture.DateTimeFormat.DayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
-                    break;
-                case nameof(WeekdaysShort):
-                    value = culture.DateTimeFormat.AbbreviatedDayNames.Select(x => x.NullIfEmpty()).SkipNulls()
-                        .ToArray();
-                    break;
-                case nameof(WeekdaysMin):
-                    value = culture.DateTimeFormat.ShortestDayNames.Select(x => x.NullIfEmpty()).SkipNulls().ToArray();
-                    break;
-                case nameof(WeekdaysParseExact):
-                    value = true;
-                    break;
-                case nameof(DayOfMonthOrdinalParse):
-                    value = new Regex("\\d{1,2}");
-                    break;
-                case nameof(Ordinal):
-                    value = "function (number) { return number; }";
-                    break;
-                default:
-                    value = default;
-                    break;
-            }
-
-            return (T) Convert.ChangeType(value, typeof(T));
-        }
     }
 }

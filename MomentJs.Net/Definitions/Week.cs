@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using MomentJs.Net.Converters;
+﻿using MomentJs.Net.Converters;
 using Newtonsoft.Json;
 
 namespace MomentJs.Net.Definitions
@@ -9,9 +7,8 @@ namespace MomentJs.Net.Definitions
     {
         public Week()
         {
-            FirstDayOfWeek = culture => GetDefaultValue<int>(nameof(FirstDayOfWeek), culture);
-            FirstWeekOfYear = culture => GetDefaultValue<int>(nameof(FirstWeekOfYear), culture);
-            ;
+            FirstDayOfWeek = FirstDayOfWeekDefaultValue;
+            FirstWeekOfYear = FirstWeekOfYearDefaultValue;
         }
 
         /// <summary>
@@ -20,6 +17,9 @@ namespace MomentJs.Net.Definitions
         [JsonProperty("dow", Order = 1)]
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public LocaleDefinition.ValueResolver<int> FirstDayOfWeek { get; set; }
+
+        public static LocaleDefinition.ValueResolver<int> FirstDayOfWeekDefaultValue =>
+            culture => (int) culture.DateTimeFormat.FirstDayOfWeek;
 
         /// <summary>
         ///     Is used together with <see cref="FirstDayOfWeek" /> to determine the first week of the year. FirstWeekOfYear is
@@ -30,24 +30,8 @@ namespace MomentJs.Net.Definitions
         [JsonConverter(typeof(LocaleResolverJsonConverter))]
         public LocaleDefinition.ValueResolver<int> FirstWeekOfYear { get; set; }
 
-        protected static T GetDefaultValue<T>(string type, CultureInfo culture)
-        {
-            object value;
-            switch (type)
-            {
-                case nameof(FirstDayOfWeek):
-                    value = (int) culture.DateTimeFormat.FirstDayOfWeek;
-                    break;
-                case nameof(FirstWeekOfYear):
-                    // FirstWeekOfYear is calculated as 7 + <see cref="FirstDayOfWeek"/> - janX, where janX is the first day of January that must belong to the first week of the year.
-                    value = 7 + (int) culture.DateTimeFormat.FirstDayOfWeek - 1;
-                    break;
-                default:
-                    value = default;
-                    break;
-            }
-
-            return (T) Convert.ChangeType(value, typeof(T));
-        }
+        // FirstWeekOfYear is calculated as 7 + <see cref="FirstDayOfWeek"/> - janX, where janX is the first day of January that must belong to the first week of the year.
+        public static LocaleDefinition.ValueResolver<int> FirstWeekOfYearDefaultValue =>
+            culture => 7 + (int) culture.DateTimeFormat.FirstDayOfWeek - 1;
     }
 }
