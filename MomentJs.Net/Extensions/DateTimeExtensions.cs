@@ -1,64 +1,73 @@
 ﻿using System;
 using System.Globalization;
-using MomentJs.Net.Definitions;
 using MomentJs.Net.Formats;
 using MomentJs.Net.Formatters;
+using MomentJs.Net.Globalization;
 
 namespace MomentJs.Net.Extensions
 {
     public static class DateTimeExtensions
     {
-        public static string Format(this DateTime dateTime, DateFormat dateFormat, CultureInfo culture,
-            LocaleDefinition locale = null)
+        public static string Format(this DateTime dateTime, CultureInfo culture = null)
         {
-            if (locale == null)
-                locale = new LocaleDefinition();
-
-            string format = GetFormat(dateFormat, locale, culture);
-
-            return MomentFormatter.Format(dateTime, format, locale, culture);
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+            
+            return MomentFormatter.Format(dateTime, "YYYY-MM-DD[T]HH:mm:ssZ", culture);
         }
 
-        private static string GetFormat(DateFormat dateFormat, LocaleDefinition locale, CultureInfo culture)
+        public static string Format(this DateTime dateTime, string format, CultureInfo culture = null)
         {
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+            
+            return MomentFormatter.Format(dateTime, format, culture);
+        }
+
+        public static string Format(this DateTime dateTime, DateFormat dateFormat, CultureInfo culture = null)
+        {
+            GlobalizationProvider globalizationProvider = GlobalizationProvider.Instance;
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             string format;
             switch (dateFormat)
             {
                 case DateFormat.LT:
-                    format = locale.LongDateFormat.ShortTime(culture);
+                    format = globalizationProvider.LongDateFormat.ShortTime(culture);
                     break;
                 case DateFormat.LTS:
-                    format = locale.LongDateFormat.LongTime(culture);
+                    format = globalizationProvider.LongDateFormat.LongTime(culture);
                     break;
                 case DateFormat.L:
-                    format = locale.LongDateFormat.ShortDate(culture);
+                    format = globalizationProvider.LongDateFormat.ShortDate(culture);
                     break;
                 case DateFormat.l:
-                    format = locale.LongDateFormat.ShortDateCompact(culture);
+                    format = globalizationProvider.LongDateFormat.ShortDateCompact(culture);
                     break;
                 case DateFormat.LL:
-                    format = locale.LongDateFormat.LongDate(culture);
+                    format = globalizationProvider.LongDateFormat.LongDate(culture);
                     break;
                 case DateFormat.ll:
-                    format = locale.LongDateFormat.LongDateCompact(culture);
+                    format = globalizationProvider.LongDateFormat.LongDateCompact(culture);
                     break;
                 case DateFormat.LLL:
-                    format = locale.LongDateFormat.LongDateShortTime(culture);
+                    format = globalizationProvider.LongDateFormat.LongDateShortTime(culture);
                     break;
                 case DateFormat.lll:
-                    format = locale.LongDateFormat.LongDateShortTimeCompact(culture);
+                    format = globalizationProvider.LongDateFormat.LongDateShortTimeCompact(culture);
                     break;
                 case DateFormat.LLLL:
-                    format = locale.LongDateFormat.FullDateTime(culture);
+                    format = globalizationProvider.LongDateFormat.FullDateTime(culture);
                     break;
                 case DateFormat.llll:
-                    format = locale.LongDateFormat.FullDateTimeCompact(culture);
+                    format = globalizationProvider.LongDateFormat.FullDateTimeCompact(culture);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dateFormat), dateFormat, null);
             }
 
-            return format;
+            return MomentFormatter.Format(dateTime, format, culture);
         }
     }
 }

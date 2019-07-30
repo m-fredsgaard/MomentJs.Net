@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace MomentJs.Net.Converters
 {
-    internal class DayOfMonthOrdinalParseJsonConverter : JsonConverter
+    internal class RegexJsonConverter : JsonConverter
     {
         public override bool CanRead => false;
 

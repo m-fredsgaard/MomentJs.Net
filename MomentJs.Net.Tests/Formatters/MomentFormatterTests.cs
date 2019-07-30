@@ -1,16 +1,39 @@
 using System;
 using System.Globalization;
-using MomentJs.Net.Definitions;
 using MomentJs.Net.Formats;
 using MomentJs.Net.Formatters;
+using MomentJs.Net.Globalization;
 using NUnit.Framework;
 
 namespace MomentJs.Net.Tests.Formatters
 {
     [TestFixture]
-    public class DateFormatterTests
+    public class MomentFormatterTests
     {
         private static readonly DateTime DateTime = new DateTime(1986, 9, 4, 20, 30, 25, 123);
+
+        [OneTimeSetUp]
+        public void GlobalizationProviderSetup()
+        {
+            GlobalizationProvider.Instance.Ordinal = culture =>
+            {
+                switch (culture.Name)
+                {
+                    case "en-US":
+                        return @"function (number) { var b = number % 10,
+                output = (~~(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+                console.log(output);
+            return number + output; }";
+                    case "da-DK":
+                        return @"function (number){return number+'.';}";
+                    default:
+                        return @"function (number){return number;}";
+                }
+            };
+        }
 
         [TestCase(FormatToken.M, "en-US", ExpectedResult = "9")]
         [TestCase(FormatToken.M, "da-DK", ExpectedResult = "9")]
@@ -104,18 +127,18 @@ namespace MomentJs.Net.Tests.Formatters
         [TestCase(FormatToken.SS, "da-DK", ExpectedResult = "12")]
         [TestCase(FormatToken.SSS, "en-US", ExpectedResult = "123")]
         [TestCase(FormatToken.SSS, "da-DK", ExpectedResult = "123")]
-        [TestCase(FormatToken.SSSS, "en-US", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSS, "da-DK", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSS, "en-US", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSS, "da-DK", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSS, "en-US", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSS, "da-DK", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSSS, "en-US", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSSS, "da-DK", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSSSS, "en-US", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSSSS, "da-DK", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSSSSS, "en-US", ExpectedResult = "")]
-        [TestCase(FormatToken.SSSSSSSSS, "da-DK", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSS, "en-US", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSS, "da-DK", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSS, "en-US", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSS, "da-DK", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSS, "en-US", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSS, "da-DK", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSSS, "en-US", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSSS, "da-DK", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSSSS, "en-US", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSSSS, "da-DK", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSSSSS, "en-US", ExpectedResult = "")]
+        //[TestCase(FormatToken.SSSSSSSSS, "da-DK", ExpectedResult = "")]
         [TestCase(FormatToken.Z, "en-US", ExpectedResult = "+02:00")]
         [TestCase(FormatToken.Z, "da-DK", ExpectedResult = "+02:00")]
         [TestCase(FormatToken.ZZ, "en-US", ExpectedResult = "+0200")]
@@ -127,11 +150,10 @@ namespace MomentJs.Net.Tests.Formatters
         public string StandardFormat_With_StandardLocaleDefinition(FormatToken formatToken, string cultureName)
         {
             // Arrange
-            LocaleDefinition localeDefinition = GetLocaleDefinition();
             CultureInfo culture = new CultureInfo(cultureName);
 
             // Act
-            string result = MomentFormatter.Format(DateTime, formatToken, localeDefinition, culture);
+            string result = MomentFormatter.Format(DateTime, formatToken, culture);
 
             // Assert
             return result;
@@ -141,45 +163,26 @@ namespace MomentJs.Net.Tests.Formatters
         [TestCase("dddd, Do MMMM, YYYY HH:mm", "da-DK", ExpectedResult = "torsdag, 4. september, 1986 20:30")]
         [TestCase("dddd, Do MMMM, YYYY 'YYYY' HH:mm", "da-DK", ExpectedResult =
             "torsdag, 4. september, 1986 YYYY 20:30")]
+        [TestCase("YYYY-MM-DD[T]HH:mm:ssZ", "da-DK", ExpectedResult = "1986-09-04T20:30:25+02:00")]
+        [TestCase("YYYY-MM-DD[T]HH:mm:ssZ", "en-US", ExpectedResult = "1986-09-04T20:30:25+02:00")]
+        [TestCase("YYYYMMDD", "da-DK", ExpectedResult = "19860904")]
+        [TestCase("YYMMDD", "da-DK", ExpectedResult = "860904")]
+        [TestCase("aa", "en-US", ExpectedResult = "pmpm")]
+        [TestCase("AA", "en-US", ExpectedResult = "PMPM")]
+        [TestCase("Aa", "en-US", ExpectedResult = "PMpm")]
+        [TestCase("aa", "da-DK", ExpectedResult = "")]
+        [TestCase("Doo", "da-DK", ExpectedResult = "4.o")]
+        [TestCase("YYY", "da-DK", ExpectedResult = "86Y")]
         public string CustomFormat_With_LocaleDefinition(string format, string cultureName)
         {
             // Arrange
-            LocaleDefinition localeDefinition = GetLocaleDefinition();
             CultureInfo culture = new CultureInfo(cultureName);
 
             // Act
-            string result = MomentFormatter.Format(DateTime, format, localeDefinition, culture);
+            string result = MomentFormatter.Format(DateTime, format, culture);
 
             // Assert
             return result;
-        }
-
-        private static LocaleDefinition GetLocaleDefinition()
-        {
-            LocaleDefinition localeDefinition = new LocaleDefinition
-            {
-                Ordinal = culture =>
-                {
-                    switch (culture.Name)
-                    {
-                        case "en-US":
-                            return @"function (number) { var b = number % 10,
-                output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
-                console.log(output);
-            return number + output; }";
-                        case "da-DK":
-                            return @"function (number){return number+'.';}";
-                        default:
-                            return @"function (number){return number;}";
-                    }
-                }
-            };
-
-
-            return localeDefinition;
         }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-using MomentJs.Net.Definitions;
+using MomentJs.Net.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace MomentJs.Net.Converters
 {
-    internal class LocaleResolverJsonConverter<T> : LocaleResolverJsonConverter
+    internal class ValueResolverJsonConverter<T> : ValueResolverJsonConverter
         where T : JsonConverter, new()
     {
         public override bool CanRead => false;
@@ -20,7 +20,7 @@ namespace MomentJs.Net.Converters
         }
     }
 
-    internal class LocaleResolverJsonConverter : JsonConverter
+    internal class ValueResolverJsonConverter : JsonConverter
     {
         protected object GetValue(object localeResolver, CultureInfo culture)
         {
@@ -48,7 +48,7 @@ namespace MomentJs.Net.Converters
 
         public sealed override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(LocaleDefinition.ValueResolver<>);
+            return objectType == typeof(ValueResolver<>);
         }
     }
 }

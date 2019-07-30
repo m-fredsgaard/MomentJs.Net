@@ -8,7 +8,7 @@ using MomentJs.Net.Formats;
 
 namespace MomentJs.Net.Converters
 {
-    public class PatternConverter
+    public static class PatternConverter
     {
         public static string ConvertToMomentPattern(string standardPattern, CultureInfo culture,
             DateFormat format, bool tolerant = true)

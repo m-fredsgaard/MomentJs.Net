@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using MomentJs.Net.Definitions;
 using MomentJs.Net.Extensions;
 using MomentJs.Net.Formats;
 using NUnit.Framework;
@@ -34,41 +33,13 @@ namespace MomentJs.Net.Tests.Extensions
         public string DateFormat_With_LocaleDefinition(DateFormat formatToken, string cultureName)
         {
             // Arrange
-            LocaleDefinition localeDefinition = GetLocaleDefinition();
             CultureInfo culture = new CultureInfo(cultureName);
 
             // Act
-            string result = DateTime.Format(formatToken, culture, localeDefinition);
+            string result = DateTime.Format(formatToken, culture);
 
             // Assert
             return result;
-        }
-
-        private static LocaleDefinition GetLocaleDefinition()
-        {
-            LocaleDefinition localeDefinition = new LocaleDefinition
-            {
-                Ordinal = culture =>
-                {
-                    switch (culture.Name)
-                    {
-                        case "en-US":
-                            return @"function (number) { var b = number % 10,
-                output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
-                console.log(output);
-            return number + output; }";
-                        case "da-DK":
-                            return @"function (number){return number+'.';}";
-                        default:
-                            return @"function (number){return number;}";
-                    }
-                }
-            };
-
-            return localeDefinition;
         }
     }
 }

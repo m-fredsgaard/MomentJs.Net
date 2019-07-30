@@ -2,7 +2,7 @@
 using MomentJs.Net.Formats;
 using Newtonsoft.Json;
 
-namespace MomentJs.Net.Definitions
+namespace MomentJs.Net.Globalization
 {
     public class LongDateFormat
     {
@@ -21,70 +21,70 @@ namespace MomentJs.Net.Definitions
         }
 
         [JsonProperty("LT", Order = 1)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<string> ShortTime { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<string> ShortTime { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> ShortTimeDefaultValue => culture =>
+        public static ValueResolver<string> ShortTimeDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.ShortTimePattern, culture, DateFormat.LT);
 
         [JsonProperty("LTS", Order = 2)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<string> LongTime { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<string> LongTime { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> LongTimeDefaultValue => culture =>
+        public static ValueResolver<string> LongTimeDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.LongTimePattern, culture, DateFormat.LTS);
 
         [JsonProperty("L", Order = 3)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<string> ShortDate { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<string> ShortDate { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> ShortDateDefaultValue => culture =>
+        public static ValueResolver<string> ShortDateDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.ShortDatePattern, culture, DateFormat.L);
 
         [JsonProperty("LL", Order = 4)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<string> LongDate { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<string> LongDate { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> LongDateDefaultValue => culture =>
+        public static ValueResolver<string> LongDateDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.LongDatePattern, culture, DateFormat.LL);
 
         [JsonProperty("LLL", Order = 5)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<string> LongDateShortTime { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<string> LongDateShortTime { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> LongDateShortTimeDefaultValue => culture =>
+        public static ValueResolver<string> LongDateShortTimeDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(
                 culture.DateTimeFormat.LongDatePattern + " " + culture.DateTimeFormat.ShortTimePattern, culture,
                 DateFormat.LLL);
 
         [JsonProperty("LLLL", Order = 6)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<string> FullDateTime { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<string> FullDateTime { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> FullDateTimeDefaultValue => culture =>
+        public static ValueResolver<string> FullDateTimeDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.FullDateTimePattern, culture,
                 DateFormat.LLLL);
 
-        [JsonIgnore] public LocaleDefinition.ValueResolver<string> ShortDateCompact { get; set; }
+        [JsonIgnore] public ValueResolver<string> ShortDateCompact { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> ShortDateCompactDefaultValue => culture =>
+        public static ValueResolver<string> ShortDateCompactDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.ShortDatePattern, culture, DateFormat.l);
 
-        [JsonIgnore] public LocaleDefinition.ValueResolver<string> LongDateCompact { get; set; }
+        [JsonIgnore] public ValueResolver<string> LongDateCompact { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> LongDateCompactDefaultValue => culture =>
+        public static ValueResolver<string> LongDateCompactDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.LongDatePattern, culture, DateFormat.ll);
 
-        [JsonIgnore] public LocaleDefinition.ValueResolver<string> LongDateShortTimeCompact { get; set; }
+        [JsonIgnore] public ValueResolver<string> LongDateShortTimeCompact { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> LongDateShortTimeCompactDefaultValue => culture =>
+        public static ValueResolver<string> LongDateShortTimeCompactDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(
                 culture.DateTimeFormat.LongDatePattern + " " + culture.DateTimeFormat.ShortTimePattern, culture,
                 DateFormat.lll);
 
-        [JsonIgnore] public LocaleDefinition.ValueResolver<string> FullDateTimeCompact { get; set; }
+        [JsonIgnore] public ValueResolver<string> FullDateTimeCompact { get; set; }
 
-        public static LocaleDefinition.ValueResolver<string> FullDateTimeCompactDefaultValue => culture =>
+        public static ValueResolver<string> FullDateTimeCompactDefaultValue => culture =>
             PatternConverter.ConvertToMomentPattern(culture.DateTimeFormat.FullDateTimePattern, culture,
                 DateFormat.llll);
     }

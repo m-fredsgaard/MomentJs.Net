@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using Jint;
 
-namespace MomentJs.Net.Definitions
+namespace MomentJs.Net.Globalization
 {
-    public class Ordinal
+    public abstract class Javascript
     {
-        private Ordinal(string javascriptFunction)
+        protected Javascript(string javascriptFunction)
         {
             JavascriptFunction = javascriptFunction;
         }
@@ -38,7 +38,7 @@ namespace MomentJs.Net.Definitions
 
                 if (string.IsNullOrWhiteSpace(functionName))
                 {
-                    functionName = "ordinal";
+                    functionName = "fn";
                     javascript = javascript.Insert(8, " " + functionName);
                 }
 
@@ -48,6 +48,13 @@ namespace MomentJs.Net.Definitions
             {
                 return value.ToString();
             }
+        }
+    }
+    public class Ordinal : Javascript
+    {
+        public Ordinal(string javascriptFunction) 
+            : base(javascriptFunction)
+        {
         }
 
         public static implicit operator string(Ordinal ordinal)

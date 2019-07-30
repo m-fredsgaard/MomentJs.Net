@@ -1,7 +1,7 @@
 ﻿using MomentJs.Net.Converters;
 using Newtonsoft.Json;
 
-namespace MomentJs.Net.Definitions
+namespace MomentJs.Net.Globalization
 {
     public class Week
     {
@@ -15,10 +15,10 @@ namespace MomentJs.Net.Definitions
         ///     Is representing the first day of the week, 0 is Sunday, 1 is Monday, ..., 6 is Saturday
         /// </summary>
         [JsonProperty("dow", Order = 1)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<int> FirstDayOfWeek { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<int> FirstDayOfWeek { get; set; }
 
-        public static LocaleDefinition.ValueResolver<int> FirstDayOfWeekDefaultValue =>
+        public static ValueResolver<int> FirstDayOfWeekDefaultValue =>
             culture => (int) culture.DateTimeFormat.FirstDayOfWeek;
 
         /// <summary>
@@ -27,11 +27,11 @@ namespace MomentJs.Net.Definitions
         ///     the first week of the year.
         /// </summary>
         [JsonProperty("doy", Order = 2)]
-        [JsonConverter(typeof(LocaleResolverJsonConverter))]
-        public LocaleDefinition.ValueResolver<int> FirstWeekOfYear { get; set; }
+        [JsonConverter(typeof(ValueResolverJsonConverter))]
+        public ValueResolver<int> FirstWeekOfYear { get; set; }
 
         // FirstWeekOfYear is calculated as 7 + <see cref="FirstDayOfWeek"/> - janX, where janX is the first day of January that must belong to the first week of the year.
-        public static LocaleDefinition.ValueResolver<int> FirstWeekOfYearDefaultValue =>
+        public static ValueResolver<int> FirstWeekOfYearDefaultValue =>
             culture => 7 + (int) culture.DateTimeFormat.FirstDayOfWeek - 1;
     }
 }

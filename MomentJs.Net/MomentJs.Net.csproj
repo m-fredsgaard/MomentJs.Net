@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.2-alpha</Version>
+    <Version>0.4.0-alpha</Version>
     <Authors>m-fredsgaard</Authors>
     <Company>GenericShape</Company>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
@@ -12,8 +12,8 @@
     <PackageTags>momentjs</PackageTags>
     <Copyright></Copyright>
     <Description>A .net implementation of momentjs, with seamless collaboration between client and server as main focus.</Description>
-    <AssemblyVersion>0.3.0.0</AssemblyVersion>
-    <FileVersion>0.3.0.0</FileVersion>
+    <AssemblyVersion>0.4.0.0</AssemblyVersion>
+    <FileVersion>0.4.0.0</FileVersion>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 

@@ -1,10 +1,10 @@
 ﻿using System;
-using MomentJs.Net.Definitions;
+using MomentJs.Net.Globalization;
 using Newtonsoft.Json;
 
 namespace MomentJs.Net.Converters
 {
-    internal class OrdinalJsonConverter : JsonConverter
+    internal class JavascriptJsonConverter : JsonConverter
     {
         public override bool CanRead => false;
 
@@ -12,7 +12,7 @@ namespace MomentJs.Net.Converters
         {
             string function = value.ToString();
             if (string.IsNullOrWhiteSpace(function))
-                function = "function (number) { return number; }";
+                function = "function (value) { return value; }";
 
             writer.WriteRawValue(function);
         }
@@ -26,7 +26,7 @@ namespace MomentJs.Net.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(Ordinal);
+            return typeof(Javascript).IsAssignableFrom(objectType);
         }
     }
 }

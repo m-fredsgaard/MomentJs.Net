@@ -1,47 +1,34 @@
 ﻿using System.Globalization;
-using MomentJs.Net.Definitions;
+using MomentJs.Net.Globalization;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-// ReSharper disable once ClassNeverInstantiated.Local
-// ReSharper disable UnusedMember.Local
-
-namespace MomentJs.Net.Tests.Definitions
+namespace MomentJs.Net.Tests.Globalization
 {
     [TestFixture]
-    public class LocaleDefinitionTests
+    public class GlobalizationProviderTests
     {
-        private class TestLocalDefinition : LocaleDefinition
+        [OneTimeSetUp]
+        public void GlobalizationProviderSetup()
         {
-            public TestLocalDefinition(CultureInfo culture)
+            GlobalizationProvider.Instance.Ordinal = culture =>
             {
-                Initialize(culture.Name);
-            }
-
-            public TestLocalDefinition(string cultureName)
-            {
-                Initialize(cultureName);
-            }
-
-            private void Initialize(string culture)
-            {
-                switch (culture)
+                switch (culture.Name)
                 {
                     case "en-US":
-                        Ordinal = c => @"function (number) { 
-	var b = number % 10,
-	output = ((number % 100 / 10) === 1) ? 'th' :
-		(b === 1) ? 'st' :
-		(b === 2) ? 'nd' :
-		(b === 3) ? 'rd' : 'th';
-	return number + output;
-}";
-                        break;
+                        return @"function (number) { var b = number % 10,
+                output = (~~(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+                console.log(output);
+            return number + output; }";
                     case "da-DK":
-                        Ordinal = c => @"function test(value){return value+'.';}";
-                        break;
+                        return @"function (number){return number+'.';}";
+                    default:
+                        return @"function (number){return number;}";
                 }
-            }
+            };
         }
 
         [TestCase(1, "en-US", ExpectedResult = "1st")]
@@ -67,22 +54,18 @@ namespace MomentJs.Net.Tests.Definitions
         public string Ordinal(int value, string cultureName)
         {
             CultureInfo culture = new CultureInfo(cultureName);
-            TestLocalDefinition localDefinition = new TestLocalDefinition(cultureName);
-            return localDefinition.Ordinal(culture).Format(value);
+
+            return GlobalizationProvider.Instance.Ordinal(culture).Format(value);
         }
 
         [Test]
-        public void Serialize_LocaleDefinition()
+        public void Serialize()
         {
             // Arrange
             CultureInfo culture = new CultureInfo("en-US");
-            TestLocalDefinition localDefinition = new TestLocalDefinition(culture)
-            {
-                Ordinal = c => "function (number) { return number }"
-            };
 
             // Act
-            string result = JsonConvert.SerializeObject(localDefinition, new JsonSerializerSettings
+            string result = JsonConvert.SerializeObject(GlobalizationProvider.Instance, new JsonSerializerSettings
             {
                 Culture = culture
             });
